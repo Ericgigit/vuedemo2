@@ -61,22 +61,32 @@
 						<i class="el-icon-document"></i>
 						<span slot="title">导航三</span>
 					</el-menu-item>
-					<el-menu-item index="4" @click="goToPage('complaint')">
+					<el-menu-item v-if="user.pPower == average" index="4" @click="goToPage('complaint')">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">投诉</span>
 					</el-menu-item>
 					
-					<el-menu-item index="5"
+					<el-menu-item v-if="user.pPower == manager" index="4" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉审批</span>
+					</el-menu-item>
+					
+					<el-menu-item v-if="user.pPower == dealer" index="4" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉处理</span>
+					</el-menu-item>
+					
+					<el-menu-item index="6"
 						style="display: flex; flex-direction: row; text-align: center; height: 60px;">
 						<img class="col-menu-avatar" :src="require('@/assets/background/background_2.png')">
 						<!-- <img class="col-menu-avatar" :src="require('@/assets/logo4.png')"> -->
 						<div style="line-height: 60px; margin-left: 10px;">{{user.pName}}</div>
 					</el-menu-item>
-					<el-menu-item index="6">
+					<el-menu-item index="7">
 						<i class="el-icon-setting"></i>
 						<span slot="title">设置</span>
 					</el-menu-item>
-					<el-menu-item index="/amin" @click="loginOut()">
+					<el-menu-item index="8" @click="loginOut()">
 						<i class="el-icon-circle-close"></i>
 						<span slot="title">退出登录</span>
 					</el-menu-item>
@@ -106,6 +116,10 @@
 	export default {
 		data() {
 			return {
+				manager: 3,
+				dealer: 2,
+				average: 1,
+				
 				activeIndex: "/main",
 				userInfo: {
 					userType: null,

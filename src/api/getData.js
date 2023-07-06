@@ -48,19 +48,22 @@ export function querySuitByPage(data) {
 //撤回投诉
 export function undoSuit(data) {
 	return request({
-		url: '/suit/undoSuit',//请求接口
+		url: '/suit/listSuit',//请求接口
 		method: 'post',//请求方式
 		data//请求参数
 	})
 }
 
-export function queryById(data) {
+//分配处理人员
+export function allocSuit(data) {
 	return request({
-		url: '/student/getStudent',//请求接口
+		url: '/suit/allocSuit',//请求接口
 		method: 'post',//请求方式
 		data//请求参数
 	})
 }
+
+
 //学生列表
 export function listStudent(data) {
 	return request({

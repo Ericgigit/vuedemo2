@@ -1,7 +1,15 @@
 <template>
 	<div class="my-outline-border">
-		<el-button class="creat-complaint-button" type="primary" @click="creatComplaint()">新建投诉</el-button>
-		<el-button class="creat-complaint-button" type="primary" @click="getList()">查询投诉</el-button>
+		<el-button v-if="user.pPower == average" class="creat-complaint-button" type="primary"
+			@click="creatComplaint()">新建投诉</el-button>
+		<el-button v-if="user.pPower == average" class="creat-complaint-button" type="primary"
+			@click="getList()">查询投诉</el-button>
+		<el-button v-if="user.pPower == manager" class="creat-complaint-button" type="primary"
+			@click="getList()">所有投诉</el-button>
+		<el-button v-if="user.pPower == manager" class="creat-complaint-button" type="primary"
+			@click="getUnallocList()">未分配投诉</el-button>
+		<el-button v-if="user.pPower == manager" class="creat-complaint-button" type="primary"
+			@click="getUncompleteList()">待结案投诉</el-button>
 
 		<!-- <el-table v-loading="loading" :data="suitList" stripe border>
 			<el-table-column label="投诉单编号" align="center" prop="sId" />
@@ -18,16 +26,23 @@
 
 
 		<el-switch v-model="active_border" active-text="开启边框" style="width: 100%; margin-top: 15px;"></el-switch>
-		
+
 		<el-divider></el-divider>
-		<div v-for="(item,index) in suitList" v-bind:key="index">
+		<div v-for="(item,index) in suitList" v-bind:key="index" v-loading="loading">
 			<el-descriptions class="margin-top" :title="description_title+item.sId" :column="2" :border=active_border>
 
 				<template slot="extra">
+					<el-select v-if="user.pPower == manager" v-model="item.dealId" clearable placeholder="分配处理人员" style="margin-right: 10px;">
+						<el-option v-for="deal in options" :key="deal.value" :label="deal.label" :value="deal.value">
+						</el-option>
+					</el-select>
+					<el-button v-if="user.pPower == manager" type="primary" size="small" @click="confirmAlloc(item.sId,item.dealId)">分配</el-button>
+					
 					<el-button type="primary" size="small" @click="undoSuitButton(item.sId)">撤回投诉</el-button>
 				</template>
-				<el-descriptions-item label="投诉人">{{user.pName}}</el-descriptions-item>
-				<el-descriptions-item label="手机号">{{user.pPhone}}</el-descriptions-item>
+				
+				<el-descriptions-item label="投诉人ID">{{item.submitId}}</el-descriptions-item>
+				<el-descriptions-item label="手机号">{{item.submitId}}</el-descriptions-item>
 				<el-descriptions-item label="备注">
 					<el-tag size="small">游客</el-tag>
 				</el-descriptions-item>
@@ -38,8 +53,9 @@
 				<el-step title="分配处理人员"></el-step>
 				<el-step title="处理投诉"></el-step>
 				<el-step title="评价"></el-step>
+				<el-step title="已结案"></el-step>
 			</el-steps>
-			<el-divider ></el-divider>
+			<el-divider></el-divider>
 		</div>
 
 		<!-- 分页组件 -->
@@ -75,6 +91,7 @@
 		submitSuitForm,
 		querySuitByPage,
 		undoSuit,
+		allocSuit,
 	} from '@/api/getData.js';
 	import {
 		getStorage,
@@ -82,6 +99,19 @@
 	export default {
 		data() {
 			return {
+				options: [{
+					value: 4,
+					label: '黄金糕'
+				}, {
+					value: 5,
+					label: '双皮奶'
+				}],
+				deal_value: '',
+				
+				manager: 3,
+				dealer: 2,
+				average: 1,
+
 				// 遮罩层
 				loading: true,
 				// 学生表格数据
@@ -91,6 +121,8 @@
 					page: 1,
 					limit: 3,
 					submitId: null,
+					state: null,
+					dealId: null,
 				},
 				//总条数
 				total: 0,
@@ -154,25 +186,27 @@
 				this.$refs["suit_form"].resetFields();
 			},
 			//撤回投诉
-			undoSuitButton(suitId){
+			undoSuitButton(suitId) {
 				this.$confirm('请问是否撤回投诉', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					let suit = {sid: suitId};
+					let suit = {
+						sid: suitId
+					};
 					//发送请求撤回投诉
 					undoSuit(suit).then(res => {
 						if (res != -1) {
 							//提示
 							this.$message.success("撤回成功");
-						}else{
+						} else {
 							this.$message.success("撤回失败");
 						}
 						this.getList();
 					})
 				}).catch(() => {
-				
+
 				});
 			},
 			//在缓存获取用户信息
@@ -201,7 +235,15 @@
 			/** 查询学生列表 */
 			getList() {
 				this.loading = true;
-				this.queryParams.submitId = this.user.pId;
+				if (this.user.pPower == 1) {
+					this.queryParams.submitId = this.user.pId;
+				} else if (this.user.pPower == 2) {
+					this.queryParams.state = 2;
+					this.queryParams.dealId = this.user.pId;
+				} else if (this.user.pPower == 3) {
+					this.queryParams.state = null;
+				}
+
 				console.log(this.queryParams);
 				querySuitByPage(this.queryParams).then(response => {
 					this.suitList = response.datas;
@@ -210,6 +252,41 @@
 					this.loading = false;
 				});
 			},
+			getUnallocList() {
+				this.queryParams.state = 1;
+				querySuitByPage(this.queryParams).then(response => {
+					this.suitList = response.datas;
+					console.log(response.datas);
+					this.total = response.total;
+					this.loading = false;
+				});
+			},
+			getUncompleteList() {
+				this.queryParams.state = 4;
+				querySuitByPage(this.queryParams).then(response => {
+					this.suitList = response.datas;
+					console.log(response.datas);
+					this.total = response.total;
+					this.loading = false;
+				});
+			},
+			confirmAlloc(suitId,dealid){
+				let suit = {
+					sid: suitId,
+					dealId: dealid,
+					state: 2,
+				}
+				console.log(suit);
+				allocSuit(suit).then(res => {
+					if (res != -1) {
+						//提示
+						this.$message.success("分配成功");
+					} else {
+						this.$message.success("分配失败");
+					}
+					this.getList();
+				});
+			}
 		},
 		mounted() {
 			this.$nextTick(function() {
