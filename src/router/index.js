@@ -6,6 +6,7 @@ import login from "../page/login/login";
 import main from "../page/main/main";
 import student from "../page/student/student";
 import score from "../page/score/score";
+import complaint from "../page/complaint/complaint";
 
 
 Vue.use(Router);
@@ -35,6 +36,14 @@ export default new Router({
 			  	component:main,
 			  	meta:{
 			  		title:"首页"
+			  	}
+			  },
+			  {
+			  	path:'/complaint',
+			  	name:'complaint',
+			  	component:complaint,
+			  	meta:{
+			  		title:"投诉"
 			  	}
 			  },
 			  {

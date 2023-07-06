@@ -41,7 +41,7 @@
 
 <script>
 	import { } from '../utils/request.js';
-	import { queryById } from '../api/getStudent.js';
+	import { queryById } from '../api/getData.js';
 	
 	export default {
 		data() {

@@ -10,21 +10,14 @@
 			<el-form-item>
 				<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
 				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+				<el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
 			</el-form-item>
 		</el-form>
-
-		<!--操作栏-->
-		<el-row :gutter="10" class="mb8">
-			<el-col :span="1.5">
-				<el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
-			</el-col>
-		</el-row>
 
 		<el-table v-loading="loading" :data="studentList" stripe border>
 			<el-table-column label="主键Id" align="center" prop="studentId" />
 			<el-table-column label="姓名" align="center" prop="studentName" />
-			<el-table-column label="出身日期" align="center" prop="studentBirth" />
+			<el-table-column label="出生日期" align="center" prop="studentBirth" :formatter="formatDate"/>
 			<el-table-column label="年龄" align="center" prop="studentAge" />
 			<el-table-column label="操作" align="center" class-name="small-padding fixed-width">
 				<template slot-scope="scope">
@@ -35,11 +28,14 @@
 				</template>
 			</el-table-column>
 		</el-table>
-
-		<el-pagination class="my-pagination-style" background layout="prev, pager, next"
+		
+		<!-- 分页组件 -->
+		<el-pagination
+			class="my-pagination-style" background layout="prev, pager, next"
 			:current-page="queryParams.page" :page-size="queryParams.limit" :total="total"
 			@current-change="currentChange" @prev-click="prevClick" @next-click="nextClick">
 		</el-pagination>
+		
 		<!-- 列表 结束 -->
 
 		<!-- 添加或修改 -->
@@ -58,8 +54,7 @@
 					<el-input v-model="form.studentAddress" placeholder="请输入地址" />
 				</el-form-item>
 				<el-form-item label="出生日期" prop="studentBirth">
-					<el-date-picker clearable v-model="form.studentBirth" type="date" value-format="yyyy-MM-dd"
-						placeholder="请选择出生日期">
+					<el-date-picker clearable v-model="form.studentBirth"  placeholder="请选择出生日期">
 					</el-date-picker>
 				</el-form-item>
 			</el-form>
@@ -100,7 +95,13 @@
 				// 是否显示弹出层
 				open: false,
 				// 表单参数
-				form: {},
+				form: {
+					studentName:"",
+					studentAge: null,
+					studentNo: "",
+					studentAddress:"",
+					studentBirth:"",
+				},
 				// 表单校验
 				rules: {
 					studentName: [{
@@ -117,11 +118,22 @@
 			}
 		},
 		methods: {
+			formatDate(row, column) {
+			  // 获取单元格数据
+			  let data = row[column.property]
+			  if(data == null) {
+				  return null
+			  }
+			  let dt = new Date(data)
+			  return dt.getFullYear() + '年' + (dt.getMonth() + 1) + '月' + dt.getDate() + '日' 
+			},
+
 			/** 查询学生列表 */
 			getList() {
 				this.loading = true;
 				listStudent(this.queryParams).then(response => {
 					this.studentList = response.datas;
+					console.log(response.datas);
 					this.total = response.total;
 					this.loading = false;
 				});
@@ -254,7 +266,6 @@
 
 <style>
 	.my-outline-border {
-		margin: 10px;
 		padding: 10px;
 	}
 
@@ -265,6 +276,7 @@
 
 	.my-pagination-style {
 		margin-top: 10px;
+		margin-bottom: 10px;
 		float: right;
 	}
 </style>

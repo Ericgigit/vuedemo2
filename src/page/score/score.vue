@@ -5,8 +5,7 @@
 </template>
 
 <script>
-	import { } from '@/api/getStudent.js';
-	import { setStorage, getStorage} from "@/utils/localStorage.js";
+	import { } from '@/api/getData.js';
 	export default {
 		data() {
 			return {
