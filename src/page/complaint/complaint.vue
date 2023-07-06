@@ -24,7 +24,7 @@
 			<el-descriptions class="margin-top" :title="description_title+item.sId" :column="2" :border=active_border>
 
 				<template slot="extra">
-					<el-button type="primary" size="small">操作</el-button>
+					<el-button type="primary" size="small" @click="undoSuitButton(item.sId)">撤回投诉</el-button>
 				</template>
 				<el-descriptions-item label="投诉人">{{user.pName}}</el-descriptions-item>
 				<el-descriptions-item label="手机号">{{user.pPhone}}</el-descriptions-item>
@@ -39,7 +39,7 @@
 				<el-step title="处理投诉"></el-step>
 				<el-step title="评价"></el-step>
 			</el-steps>
-			<el-divider v-if="index < queryParams.limit"></el-divider>
+			<el-divider ></el-divider>
 		</div>
 
 		<!-- 分页组件 -->
@@ -74,6 +74,7 @@
 	import {
 		submitSuitForm,
 		querySuitByPage,
+		undoSuit,
 	} from '@/api/getData.js';
 	import {
 		getStorage,
@@ -152,6 +153,28 @@
 			resetForm() {
 				this.$refs["suit_form"].resetFields();
 			},
+			//撤回投诉
+			undoSuitButton(suitId){
+				this.$confirm('请问是否撤回投诉', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					let suit = {sid: suitId};
+					//发送请求撤回投诉
+					undoSuit(suit).then(res => {
+						if (res != -1) {
+							//提示
+							this.$message.success("撤回成功");
+						}else{
+							this.$message.success("撤回失败");
+						}
+						this.getList();
+					})
+				}).catch(() => {
+				
+				});
+			},
 			//在缓存获取用户信息
 			getUserInfo() {
 				//获取用户信息
@@ -200,6 +223,7 @@
 
 <style>
 	.my-outline-border {
+		margin-left: 15px;
 		margin-top: 15px;
 		margin-right: 15px;
 		margin-bottom: 15px;

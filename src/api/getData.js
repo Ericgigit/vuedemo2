@@ -45,6 +45,15 @@ export function querySuitByPage(data) {
 	})
 }
 
+//撤回投诉
+export function undoSuit(data) {
+	return request({
+		url: '/suit/undoSuit',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
 export function queryById(data) {
 	return request({
 		url: '/student/getStudent',//请求接口
