@@ -36,6 +36,15 @@ export function submitSuitForm(data) {
 	})
 }
 
+//提交处理表单
+export function submitDealSuitForm(data) {
+	return request({
+		url: '/dealandsuit/deal',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
 //分页查询投诉
 export function querySuitByPage(data) {
 	return request({
@@ -48,7 +57,7 @@ export function querySuitByPage(data) {
 //撤回投诉
 export function undoSuit(data) {
 	return request({
-		url: '/suit/listSuit',//请求接口
+		url: '/suit/undoSuit',//请求接口
 		method: 'post',//请求方式
 		data//请求参数
 	})

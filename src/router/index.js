@@ -5,6 +5,7 @@ import home from "../page/home";
 import login from "../page/login/login";
 import main from "../page/main/main";
 import student from "../page/student/student";
+import hotel from "../page/hotel/hotel";
 import score from "../page/score/score";
 import complaint from "../page/complaint/complaint";
 
@@ -44,6 +45,14 @@ export default new Router({
 			  	component:complaint,
 			  	meta:{
 			  		title:"投诉"
+			  	}
+			  },
+			  {
+			  	path:'/hotel',
+			  	name:'hotel',
+			  	component:hotel,
+			  	meta:{
+			  		title:"学生管理"
 			  	}
 			  },
 			  {
