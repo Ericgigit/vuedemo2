@@ -52,11 +52,22 @@
 					<el-tag size="small">游客</el-tag>
 				</el-descriptions-item>
 				<el-descriptions-item label="投诉内容">{{item.submitContext}}</el-descriptions-item>
+				<el-descriptions-item label="投诉图片">
+					<!-- 图片显示区域 -->
+					<img v-if="item.submitIma" style="width: auto; height: 80px;"
+						:src="'data:image/png;base64,'+item.submitIma" />
+				</el-descriptions-item>
+				<el-descriptions-item label="投诉视频">
+					<!-- 视频预览区域 -->
+					<video v-if="item.submitVideo" controls style="width: auto; height: 100px;">
+						<source :src="'data:video/mp4;base64,'+item.submitVideo" />
+					</video>
+				</el-descriptions-item>
 			</el-descriptions>
+
+
 			
-			<!-- 图片显示区域 -->
-			<img v-if="item.submitIma" style="margin: 10px;" width="auto" height="60px" :src="'data:image/png;base64,'+item.submitIma"/>
-			
+
 			<el-steps :space="200" :active="item.state" finish-status="success" style="margin-top: 15px;">
 				<el-step title="已提交"></el-step>
 				<el-step title="分配处理人员"></el-step>
@@ -79,18 +90,27 @@
 
 		<!-- 投诉表单 -->
 		<el-dialog class="register-panel" :title="title" :visible.sync="open" width="500px" append-to-body>
-			
+
 			<el-form ref="importFormRef" :rules="rules" :model="importForm" label-width="130px">
 				<el-form-item label="投诉内容" prop="submitcontext">
 					<el-input type="textarea" v-model="suit_form.submitContext"></el-input>
 				</el-form-item>
-				
-				<el-form-item label="上传文件:" prop="excel">
+
+				<el-form-item label="上传图片:" prop="excel">
 					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
-						:http-request="httpRequest" :before-upload="beforeUpload" :on-exceed="handleExceed" 
+						:http-request="httpRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
 						:on-change="changeCarPicture" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-						<div slot="tip" class="el-upload__tip">只能上传.xlsx文件，且不超过5M</div>
+						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
+					</el-upload>
+				</el-form-item>
+
+				<el-form-item label="上传视频:" prop="excel">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeVideo" :limit="1">
+						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
 				</el-form-item>
 				<el-form-item>
@@ -140,9 +160,10 @@
 				},
 				//存放上传文件
 				fileList: [],
-				carPicture: null,
-				
-				
+				Picture: null,
+				Video: null,
+
+
 				imgDecoder: "data:image/png;base64,",
 				dialogImageUrl: '',
 				dialogVisible: false,
@@ -236,8 +257,20 @@
 				reader.onload = () => {
 					let _base64 = reader.result;
 					let BASE64 = _base64.split(",");
-					this.carPicture = BASE64[1]; //赋值
+					this.Picture = BASE64[1]; //赋值
 					console.log(this.carPicture);
+				};
+				reader.readAsDataURL(file.raw);
+			},
+			changeVideo(file) {
+				// 图片转成base64上传
+				let reader = new FileReader();
+				console.log(reader);
+				reader.onload = () => {
+					let _base64 = reader.result;
+					let BASE64 = _base64.split(",");
+					this.Video = BASE64[1]; //赋值
+					console.log(this.Video);
 				};
 				reader.readAsDataURL(file.raw);
 			},
@@ -255,17 +288,12 @@
 					return false
 				}
 				//判断文件类型，必须是xlsx格式
-				// let types = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
-				// const isImage = types.includes(file.type);
-				// if (!isImage) {
-				// 	this.$message.error('上传图片只能是 JPG、JPEG、PNG 格式!');
-				// 	return false;
-				// }
-				// let reg = /^.+(\.xlsx)$/
-				// if (!reg.test(fileName)) {
-				// 	this.$message.error("只能上传xlsx!")
-				// 	return false
-				// }
+				let types = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
+				const isImage = types.includes(file.type);
+				if (!isImage) {
+					this.$message.error('上传图片只能是 JPG、JPEG、PNG 格式!');
+					return false;
+				}
 				return true
 			},
 			// 文件数量过多时提醒
@@ -281,7 +309,8 @@
 				// 使用form表单的数据格式
 				const params = {
 					submitId: this.user.personId,
-					submitIma: this.carPicture,
+					submitIma: this.Picture,
+					submitVideo: this.Video,
 					submitContext: this.suit_form.submitContext,
 				}
 				console.log(this.fileList);
@@ -294,7 +323,7 @@
 				// params.append('targetUrl', this.importForm.targetUrl)
 				// params.append('suitId', this.importForm.suitId)
 				// params.append('submitId', this.importForm.submitId)
-			
+
 				submitSuitForm(params).then(res => {
 					console.log(res);
 					this.$message.success('新增成功');
@@ -318,7 +347,7 @@
 				// 	this.$refs.upload.clearFiles() //清空上传列表
 				// 	this.fileList = [] //集合清空
 				// 	this.dialogVisible1 = false //关闭对话框
-			
+
 				// })
 			},
 
@@ -493,5 +522,4 @@
 		margin-right: 15px;
 		margin-bottom: 15px;
 	}
-
 </style>
