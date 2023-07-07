@@ -8,8 +8,8 @@
 				<div class="login-title">欢迎登录</div>
 				<div class="login-form">
 					<el-form :model="loginForm" :rules="loginRules" ref="loginForm">
-						<el-form-item class="login-username" prop="pphone">
-							<el-input v-model="loginForm.pphone" placeholder="手机号码" clearable><i slot="prefix"
+						<el-form-item class="login-username" prop="personPhone">
+							<el-input v-model="loginForm.personPhone" placeholder="手机号码" clearable><i slot="prefix"
 									class="el-input__icon el-icon-user-solid login-input-icon"></i></el-input>
 						</el-form-item>
 						<el-form-item class="login-password" prop="password">
@@ -30,8 +30,8 @@
 		<!-- 注册 -->
 		<el-dialog class="register-panel" :title="title" :visible.sync="open" width="500px" append-to-body>
 			<el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
-				<el-form-item label="用户名" prop="pname">
-					<el-input v-model="form.pname" placeholder="请输入用户名" />
+				<el-form-item label="用户名" prop="personName">
+					<el-input v-model="form.personName" placeholder="请输入用户名" />
 				</el-form-item>
 
 				<el-form-item label="密码" prop="password">
@@ -41,8 +41,8 @@
 					<el-input type="password" v-model="form.checkPass"></el-input>
 				</el-form-item>
 
-				<el-form-item label="手机号码" prop="pphone">
-					<el-input v-model="form.pphone" placeholder="手机号码" />
+				<el-form-item label="手机号码" prop="personPhone">
+					<el-input v-model="form.personPhone" placeholder="手机号码" />
 				</el-form-item>
 				<el-form-item label="出生日期" prop="birth">
 					<el-date-picker clearable v-model="form.birth" placeholder="请选择出生日期" 
@@ -94,22 +94,22 @@
 				title: "",
 				open: false,
 				form: {
-					pname: "",
-					pphone: "",
-					ppower: null,
+					personName: "",
+					personPhone: "",
+					personpower: null,
 					birth: "",
 					password: '',
 					checkPass: '',
 				},
 				//登录数据
 				loginForm: {
-					pphone: "",
+					personPhone: "",
 					password: "",
-					pname: "Eric"
+					personName: "Eric"
 				},
 				//验证规则
 				loginRules: {
-					pphone: [{
+					personPhone: [{
 						required: true,
 						message: '请输入手机号码',
 						trigger: 'blur'
@@ -121,7 +121,7 @@
 					}],
 				},
 				rules: {
-					pname: [{
+					personName: [{
 						required: true,
 						validator: validatePass,
 					}],
@@ -135,7 +135,7 @@
 						validator: validatePass2,
 						trigger: 'blur'
 					}],
-					pphone: [{
+					personPhone: [{
 						required: true,
 						message: '请输入手机号码',
 						trigger: 'blur'
@@ -165,6 +165,7 @@
 						// this.$message.success("登录成功");
 						//验证通过,发起请求进行登录
 						login(this.loginForm).then(res => {
+							console.log(this.loginForm);
 							if (res != -1 && res.code == 200) { //登录成功 
 								console.log(res)
 								//保存user信息到localStorage

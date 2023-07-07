@@ -36,6 +36,15 @@ export function submitSuitForm(data) {
 	})
 }
 
+//提交处理表单
+export function submitDealSuitForm(data) {
+	return request({
+		url: '/dealandsuit/deal',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
 //分页查询投诉
 export function querySuitByPage(data) {
 	return request({
@@ -45,13 +54,25 @@ export function querySuitByPage(data) {
 	})
 }
 
-export function queryById(data) {
+//撤回投诉
+export function undoSuit(data) {
 	return request({
-		url: '/student/getStudent',//请求接口
+		url: '/suit/undoSuit',//请求接口
 		method: 'post',//请求方式
 		data//请求参数
 	})
 }
+
+//分配处理人员
+export function allocSuit(data) {
+	return request({
+		url: '/suit/allocSuit',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+
 //学生列表
 export function listStudent(data) {
 	return request({
