@@ -48,25 +48,37 @@
 
 				<el-descriptions-item label="投诉人">{{item.submitName}}</el-descriptions-item>
 				<el-descriptions-item label="手机号">{{item.submitPhone}}</el-descriptions-item>
-				<el-descriptions-item label="备注">
-					<el-tag size="small">游客</el-tag>
-				</el-descriptions-item>
+
 				<el-descriptions-item label="投诉内容">{{item.submitContext}}</el-descriptions-item>
-				<el-descriptions-item label="投诉图片">
+				<el-descriptions-item v-if="item.submitIma" label="投诉图片">
 					<!-- 图片显示区域 -->
 					<img v-if="item.submitIma" style="width: auto; height: 80px;"
 						:src="'data:image/png;base64,'+item.submitIma" />
 				</el-descriptions-item>
-				<el-descriptions-item label="投诉视频">
+				<el-descriptions-item v-if="item.submitVideo" label="投诉视频">
 					<!-- 视频预览区域 -->
 					<video v-if="item.submitVideo" controls style="width: auto; height: 100px;">
 						<source :src="'data:video/mp4;base64,'+item.submitVideo" />
 					</video>
 				</el-descriptions-item>
+
+				<el-descriptions-item v-if="item.dealContext" label="处理意见">
+					{{item.dealContext}}
+				</el-descriptions-item>
+				<el-descriptions-item v-if="item.dealIma" label="处理图片">
+					<!-- 图片显示区域 -->
+					<img v-if="item.dealIma" style="width: auto; height: 80px;"
+						:src="'data:image/png;base64,'+item.dealIma" />
+				</el-descriptions-item>
+				<el-descriptions-item v-if="item.dealVideo" label="处理视频">
+					<!-- 视频预览区域 -->
+					<video v-if="item.dealVideo" controls style="width: auto; height: 100px;">
+						<source :src="'data:video/mp4;base64,'+item.dealVideo" />
+					</video>
+				</el-descriptions-item>
 			</el-descriptions>
 
 
-			
 
 			<el-steps :space="200" :active="item.state" finish-status="success" style="margin-top: 15px;">
 				<el-step title="已提交"></el-step>
@@ -126,6 +138,23 @@
 					<el-input type="textarea" v-model="suit_form.dealContext"></el-input>
 				</el-form-item>
 
+				<el-form-item label="上传图片:" prop="excel">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeCarPicture" :limit="1">
+						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
+					</el-upload>
+				</el-form-item>
+
+				<el-form-item label="上传视频:" prop="excel">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeVideo" :limit="1">
+						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
+					</el-upload>
+				</el-form-item>
 
 				<el-form-item>
 					<el-button type="primary" @click="submitDealForm()">立即提交</el-button>
@@ -376,19 +405,19 @@
 				this.$refs["suit_form"].resetFields();
 			},
 			submitDealForm() {
-				this.$refs["suit_form"].validate(valid => {
-					if (valid) {
-						console.log(this.suit_form);
-						submitDealSuitForm(this.suit_form).then(res => {
-							console.log(res);
-							this.$message.success('新增成功');
-							this.open_deal = false;
-							this.getList();
-						});
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
+				//dealButton中已经设置suitId
+				const params = {
+					suitId: this.suit_form.suitId,
+					dealIma: this.Picture,
+					dealVideo: this.Video,
+					dealContext: this.suit_form.dealContext,
+				}
+
+				submitDealSuitForm(params).then(res => {
+					console.log(res);
+					this.$message.success('新增成功');
+					this.open_deal = false;
+					this.getList();
 				});
 			},
 
