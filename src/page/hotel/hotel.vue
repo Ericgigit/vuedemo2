@@ -83,11 +83,6 @@
 					this.$message.error('上传图片只能是 JPG、JPEG、PNG 格式!');
 					return false;
 				}
-				// let reg = /^.+(\.xlsx)$/
-				// if (!reg.test(fileName)) {
-				// 	this.$message.error("只能上传xlsx!")
-				// 	return false
-				// }
 				return true
 			},
 			// 文件数量过多时提醒
