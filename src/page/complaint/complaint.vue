@@ -75,13 +75,15 @@
 				<el-step title="已结案"></el-step>
 			</el-steps>
 
-			<div v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average" class="rate-div">
+			<div v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
+				class="rate-div">
 				<div v-if="item.assess" style="line-height: 20px; color: gray; font-size: 15px;">评分</div>
-				<el-rate v-if="item.assess" v-model="item.assess" disabled show-score text-color="#ff9900" ></el-rate>
-				
+				<el-rate v-if="item.assess" v-model="item.assess" disabled show-score text-color="#ff9900"></el-rate>
+
 				<div v-if="!item.assess" style="line-height: 20px; color: gray; font-size: 15px;">请评分</div>
-				<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900" ></el-rate>
-				<button v-if="!(item.state == complete_state)" class="submit-rate-button" @click="submitRate(item)">提交</button>
+				<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900"></el-rate>
+				<button v-if="!(item.state == complete_state)" class="submit-rate-button"
+					@click="submitRate(item)">提交</button>
 			</div>
 
 			<el-divider></el-divider>
@@ -103,18 +105,18 @@
 				</el-form-item>
 
 				<el-form-item label="上传图片:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+					<el-upload class="upload-demo" ref="upload" action="#"
 						:http-request="httpImgRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
-						:on-change="changeCarPicture" :limit="1">
+						:auto-upload="false" accept=".jpg,.png,.jpeg" :on-change="changeCarPicture" :limit="1" :file-list="fileListPicture">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
 				</el-form-item>
 
 				<el-form-item label="上传视频:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
-						:http-request="httpVideoRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
-						:on-change="changeVideo" :limit="1">
+					<el-upload class="upload-demo" ref="upload" action="#"
+						:http-request="httpVideoRequest" :before-upload="beforeUploadVideo" :on-exceed="handleExceed"
+						:auto-upload="false" accept=".mp4" :on-change="changeVideo" :limit="1" :file-list="fileListPicture">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
@@ -134,18 +136,18 @@
 				</el-form-item>
 
 				<el-form-item label="上传图片:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+					<el-upload class="upload-demo" ref="upload" action="#"
 						:http-request="httpImgRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
-						:on-change="changeCarPicture" :limit="1">
+						:auto-upload="false" accept=".jpg,.png,.jpeg" :on-change="changeCarPicture" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
 				</el-form-item>
 
 				<el-form-item label="上传视频:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
-						:http-request="httpVideoRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
-						:on-change="changeVideo" :limit="1">
+					<el-upload class="upload-demo" ref="upload" action="#"
+						:http-request="httpVideoRequest" :before-upload="beforeUploadVideo" :on-exceed="handleExceed"
+						:auto-upload="false" accept=".mp4" :on-change="changeVideo" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
@@ -184,7 +186,8 @@
 					submitId: '',
 				},
 				//存放上传文件
-				fileList: [],
+				fileListPicture: [],
+				fileListVideo: [],
 				Picture: null,
 				Video: null,
 
@@ -284,7 +287,7 @@
 					let _base64 = reader.result;
 					let BASE64 = _base64.split(",");
 					this.Picture = BASE64[1]; //赋值
-					console.log(this.carPicture);
+					// console.log(this.carPicture);
 				};
 				reader.readAsDataURL(file.raw);
 			},
@@ -296,31 +299,48 @@
 					let _base64 = reader.result;
 					let BASE64 = _base64.split(",");
 					this.Video = BASE64[1]; //赋值
-					console.log(this.Video);
+					// console.log(this.Video);
 				};
 				reader.readAsDataURL(file.raw);
 			},
 			// 覆盖默认的上传行为，可以自定义上传的实现，将上传的文件依次添加到fileList数组中,支持多个文件
 			httpImgRequest(option) {
-				this.fileList.push(option)
+				this.fileListPicture.push(option)
 			},
 			httpVideoRequest(option) {
-				this.fileList.push(option)
+				this.fileListVideo.push(option)
 			},
 			// 上传前处理
 			beforeUpload(file) {
 				let fileSize = file.size
-				const FIVE_M = 5 * 1024 * 1024;
-				//大于5M，不允许上传
+				const FIVE_M = 16 * 1024 * 1024;
+				//大于16M，不允许上传
 				if (fileSize > FIVE_M) {
-					this.$message.error("最大上传5MB")
+					this.$message.error("最大上传16MB")
 					return false
 				}
-				//判断文件类型，必须是xlsx格式
-				let types = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
+				//判断文件类型，必须是JPG、JPEG、PNG格式
+				let types = ['image/jpeg', 'image/jpg', 'image/png'];
 				const isImage = types.includes(file.type);
 				if (!isImage) {
 					this.$message.error('上传图片只能是 JPG、JPEG、PNG 格式!');
+					return false;
+				}
+				return true
+			},
+			beforeUploadVideo(file) {
+				let fileSize = file.size
+				const FIVE_M = 16 * 1024 * 1024;
+				//大于16M，不允许上传
+				if (fileSize > FIVE_M) {
+					this.$message.error("最大上传16MB")
+					return false
+				}
+				//判断文件类型，必须是mp4格式
+				let types = ['video/mp4'];
+				const isImage = types.includes(file.type);
+				if (!isImage) {
+					this.$message.error('上传视频只能是 mp4 格式!');
 					return false;
 				}
 				return true
@@ -343,15 +363,6 @@
 					submitContext: this.suit_form.submitContext,
 				}
 				console.log(this.fileList);
-				// 将上传文件数组依次添加到参数paramsData中
-				// this.fileList.forEach((x) => {
-				// 	paramsData.append('file', x.file)
-				// });
-				// // 将输入表单数据添加到params表单中
-				// params.append('kgCode', this.importForm.kgCode)
-				// params.append('targetUrl', this.importForm.targetUrl)
-				// params.append('suitId', this.importForm.suitId)
-				// params.append('submitId', this.importForm.submitId)
 
 				submitSuitForm(params).then(res => {
 					console.log(res);
@@ -359,25 +370,8 @@
 					this.open = false;
 					this.getList();
 				});
-				//这里根据自己封装的axios来进行调用后端接口
-				// this.httpPostWithLoading(paramsData).then(match => {
-				// 	if (match.success) {
-				// 		this.$message({
-				// 			message: "导入成功",
-				// 			type: "success"
-				// 		})
-				// 	} else {
-				// 		this.$message({
-				// 			message: "导入失败",
-				// 			type: "error"
-				// 		})
-				// 	}
-				// 	this.$refs.importFormRef.resetFields() //清除表单信息
-					this.$refs.upload.clearFiles() //清空上传列表
-					this.fileList = [] //集合清空
-				// 	this.dialogVisible1 = false //关闭对话框
+				this.resetForm();
 
-				// })
 			},
 
 			creatComplaint() {
@@ -400,6 +394,8 @@
 						return false;
 					}
 				});
+				this.resetForm();
+				
 			},
 			resetForm() {
 				this.suit_form.suitId = null;
@@ -407,8 +403,8 @@
 				this.Video = null;
 				this.suit_form.dealContext = null;
 				this.suit_form.submitContext = null;
-				this.$refs.upload.clearFiles() //清空上传列表
-				this.fileList = [] //集合清空
+				this.fileListPicture = [] //集合清空
+				this.fileListVideo = [] //集合清空
 			},
 			submitDealForm() {
 				//dealButton中已经设置suitId
@@ -432,13 +428,13 @@
 					assess: item.assess,
 				}
 				console.log(params);
-				
+
 				assessSuit(params).then(res => {
 					console.log(res);
 					this.$message.success('评价成功');
 					this.getList();
 				});
-				
+
 			},
 
 			//撤回投诉
