@@ -25,12 +25,15 @@
 						<el-option v-for="deal in options" :key="deal.value" :label="deal.label" :value="deal.value">
 						</el-option>
 					</el-select>
-					<el-button v-if="user.personPower == manager" type="primary" size="small"
+					<el-button v-if="user.personPower == manager && item.state == alloc_state" type="primary" size="small"
 						@click="confirmAlloc(item.suitId,item.dealId)">分配</el-button>
 					<el-button v-if="user.personPower == dealer" type="primary" size="small"
 						@click="dealButton(item)">处理</el-button>
 
 					<el-button type="primary" size="small" @click="undoSuitButton(item.suitId)">撤回投诉</el-button>
+					
+					<el-button v-if="user.personPower == manager && item.state == complete_state" type="primary" size="small"
+						@click="fillSuitButton(item)">结案</el-button>
 				</template>
 
 				<el-descriptions-item label="投诉人">{{item.submitName}}</el-descriptions-item>
@@ -171,6 +174,7 @@
 		undoSuit,
 		allocSuit,
 		assessSuit,
+		fillSuit,
 	} from '@/api/getData.js';
 	import {
 		getStorage,
@@ -215,6 +219,7 @@
 				manager: 3,
 				dealer: 2,
 				average: 1,
+				alloc_state:1,
 				finish_state: 3,
 				complete_state: 4,
 
@@ -546,6 +551,31 @@
 				this.title_deal = "投诉处理";
 				this.suit_form.suitId = item.suitId;
 				console.log(this.suit_form);
+			},
+			fillSuitButton(item){
+				let suit = {
+					suitId: item.suitId,
+					state: 5,
+				};
+				console.log(suit);
+				this.$confirm('请问是否结案', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					fillSuit(suit).then(res => {
+						if (res != -1) {
+							//提示
+							this.$message.success("结案成功");
+						} else {
+							this.$message.success("结案失败");
+						}
+						this.getUncompleteList();
+					});
+				}).catch(() => {
+				
+				});
+				
 			}
 		},
 		mounted() {

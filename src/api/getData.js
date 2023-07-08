@@ -81,6 +81,15 @@ export function assessSuit(data) {
 	})
 }
 
+//评价
+export function fillSuit(data) {
+	return request({
+		url: '/suit/fillSuit',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
 
 //学生列表
 export function listStudent(data) {
