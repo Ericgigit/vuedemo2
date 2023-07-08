@@ -47,7 +47,7 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center;
-		width: 380px;
+		width: 350px;
 		height: 220px;
 		margin-bottom: 20px;
 		margin-right: 20px;
@@ -65,7 +65,7 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center;
-		width: 380px;
+		width: 350px;
 		height: 220px;
 		margin-bottom: 20px;
 		margin-right: 20px;
@@ -83,7 +83,7 @@
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center;
-		width: 380px;
+		width: 350px;
 		height: 220px;
 		margin-bottom: 20px;
 		margin-right: 20px;

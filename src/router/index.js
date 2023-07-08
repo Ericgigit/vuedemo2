@@ -5,6 +5,8 @@ import home from "../page/home";
 import login from "../page/login/login";
 import main from "../page/main/main";
 import student from "../page/student/student";
+import hotel from "../page/hotel/hotel";
+import graph from "../page/graph/graph";
 import score from "../page/score/score";
 import complaint from "../page/complaint/complaint";
 
@@ -47,19 +49,27 @@ export default new Router({
 			  	}
 			  },
 			  {
+			  	path:'/hotel',
+			  	name:'hotel',
+			  	component:hotel,
+			  	meta:{
+			  		title:"酒店"
+			  	}
+			  },
+			  {
+			  	path:'/graph',
+			  	name:'graph',
+			  	component:graph,
+			  	meta:{
+			  		title:"图"
+			  	}
+			  },
+			  {
 			  	path:'/student',
 			  	name:'student',
 			  	component:student,
 			  	meta:{
 			  		title:"学生管理"
-			  	}
-			  },
-			  {
-			  	path:'/score',
-			  	name:'score',
-			  	component:score,
-			  	meta:{
-			  		title:"成绩管理"
 			  	}
 			  },
 		  ]
