@@ -26,7 +26,7 @@
 			<!-- 侧边栏 -->
 			<el-col class="col-menu-main" style="width: 220px; background-color: transparent;">
 				<!-- 			<h5 style="text-align: center;">自定义颜色</h5> -->
-				<el-menu :default-active="0" :router="true" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+				<el-menu :default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
 					background-color="#2a4d70" text-color="#fff"  active-text-color="#ffd04b" 
 					style="margin-top: 20px; margin-left: 15px; margin-right: 15px;
 					box-shadow: 0px 2px 8px 8px rgba(104, 105, 106, 0.3);">
@@ -57,26 +57,36 @@
 						<i class="el-icon-menu"></i>
 						<span slot="title">导航二</span>
 					</el-menu-item>
-					<el-menu-item index="3" disabled>
+					<el-menu-item index="3" @click="goToPage('hotel')">
 						<i class="el-icon-document"></i>
-						<span slot="title">导航三</span>
+						<span slot="title">酒店</span>
 					</el-menu-item>
-					<el-menu-item index="4" @click="goToPage('complaint')">
+					<el-menu-item v-if="user.personPower == average" index="4" @click="goToPage('complaint')">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">投诉</span>
 					</el-menu-item>
 					
-					<el-menu-item index="5"
+					<el-menu-item v-if="user.personPower == manager" index="4" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉审批</span>
+					</el-menu-item>
+					
+					<el-menu-item v-if="user.personPower == dealer" index="4" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉处理</span>
+					</el-menu-item>
+					
+					<el-menu-item index="6"
 						style="display: flex; flex-direction: row; text-align: center; height: 60px;">
 						<img class="col-menu-avatar" :src="require('@/assets/background/background_2.png')">
 						<!-- <img class="col-menu-avatar" :src="require('@/assets/logo4.png')"> -->
-						<div style="line-height: 60px; margin-left: 10px;">{{user.pName}}</div>
+						<div style="line-height: 60px; margin-left: 10px;">{{user.personName}}</div>
 					</el-menu-item>
-					<el-menu-item index="6">
+					<el-menu-item index="7">
 						<i class="el-icon-setting"></i>
 						<span slot="title">设置</span>
 					</el-menu-item>
-					<el-menu-item index="7" @click="loginOut">
+					<el-menu-item index="8" @click="loginOut()">
 						<i class="el-icon-circle-close"></i>
 						<span slot="title">退出登录</span>
 					</el-menu-item>
@@ -106,6 +116,10 @@
 	export default {
 		data() {
 			return {
+				manager: 3,
+				dealer: 2,
+				average: 1,
+				
 				activeIndex: "/main",
 				userInfo: {
 					userType: null,
@@ -115,10 +129,10 @@
 				
 				user: {
 					birth: "",
-					pId: null,
-					pName: "",
-					pPhone: "",
-					pPower: null,
+					personId: null,
+					personName: "",
+					personPhone: "",
+					personPower: null,
 					password: '',
 				},
 			}
@@ -140,7 +154,7 @@
 			loginOut() {
 				this.$confirm('请问是否退出登录', '提示', {
 					confirmButtonText: '确定',
-					cancelButtonText: '点错了',
+					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
 					//发送请求退出登录
@@ -160,6 +174,7 @@
 
 				});
 			},
+			
 			//在缓存获取用户信息
 			getUserInfo() {
 				//获取用户信息
