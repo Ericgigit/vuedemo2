@@ -6,7 +6,7 @@
 ```
 npm install axios -S
 ```
-安装router：
+安装router
 ```
 npm  install
 ```
