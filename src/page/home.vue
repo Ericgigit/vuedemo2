@@ -26,7 +26,7 @@
 			<!-- 侧边栏 -->
 			<el-col class="col-menu-main" style="width: 220px; background-color: transparent;">
 				<!-- 			<h5 style="text-align: center;">自定义颜色</h5> -->
-				<el-menu :default-active="0" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+				<el-menu :default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
 					background-color="#2a4d70" text-color="#fff"  active-text-color="#ffd04b" 
 					style="margin-top: 20px; margin-left: 15px; margin-right: 15px;
 					box-shadow: 0px 2px 8px 8px rgba(104, 105, 106, 0.3);">
@@ -53,25 +53,29 @@
 							<el-menu-item index="1-4-1">选项1</el-menu-item>
 						</el-submenu>
 					</el-submenu>
-					<el-menu-item index="2" @click="goToPage('student')">
+					<el-menu-item index="2" @click="goToPage('map')">
+						<i class="el-icon-menu"></i>
+						<span slot="title">地图</span>
+					</el-menu-item>
+					<el-menu-item index="3" @click="goToPage('student')">
 						<i class="el-icon-menu"></i>
 						<span slot="title">导航二</span>
 					</el-menu-item>
-					<el-menu-item index="3" @click="goToPage('hotel')">
+					<el-menu-item index="4" @click="goToPage('hotel')">
 						<i class="el-icon-document"></i>
 						<span slot="title">酒店</span>
 					</el-menu-item>
-					<el-menu-item v-if="user.personPower == average" index="4" @click="goToPage('complaint')">
+					<el-menu-item v-if="user.personPower == average" index="5" @click="goToPage('complaint')">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">投诉</span>
 					</el-menu-item>
 					
-					<el-menu-item v-if="user.personPower == manager" index="4" @click="goToPage('complaint')">
+					<el-menu-item v-if="user.personPower == manager" index="5" @click="goToPage('complaint')">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">投诉审批</span>
 					</el-menu-item>
 					
-					<el-menu-item v-if="user.personPower == dealer" index="4" @click="goToPage('complaint')">
+					<el-menu-item v-if="user.personPower == dealer" index="5" @click="goToPage('complaint')">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">投诉处理</span>
 					</el-menu-item>
@@ -185,7 +189,7 @@
 
 		},
 		mounted() {
-			this.goToPage('main');
+			this.goToPage('map');
 			this.$nextTick(function() {
 				// 仅在整个视图都被渲染之后才会运行的代码
 				this.getUserInfo();

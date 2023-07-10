@@ -7,7 +7,7 @@ import main from "../page/main/main";
 import student from "../page/student/student";
 import hotel from "../page/hotel/hotel";
 import graph from "../page/graph/graph";
-import score from "../page/score/score";
+import map from "../page/map/map";
 import complaint from "../page/complaint/complaint";
 
 
@@ -62,6 +62,14 @@ export default new Router({
 			  	component:graph,
 			  	meta:{
 			  		title:"图"
+			  	}
+			  },
+			  {
+			  	path:'/map',
+			  	name:'map',
+			  	component:map,
+			  	meta:{
+			  		title:"地图"
 			  	}
 			  },
 			  {

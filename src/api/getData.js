@@ -90,6 +90,14 @@ export function fillSuit(data) {
 	})
 }
 
+//获取最短路径
+export function getPath(data) {
+	return request({
+		url: '/path/getPath',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
 
 //学生列表
 export function listStudent(data) {
@@ -99,6 +107,7 @@ export function listStudent(data) {
 		data//请求参数
 	})
 }
+
 //通过studengId获取学生信息
 export function getStudent(data) {
 	return request({
