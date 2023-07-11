@@ -40,21 +40,14 @@
 							<i class="el-icon-location"></i>
 							<span>导航一</span>
 						</template>
-						<el-menu-item-group style="width: 100px;">
-							<template slot="title">分组一</template>
-							<el-menu-item index="1-1">选项1</el-menu-item>
-							<el-menu-item index="1-2">选项2</el-menu-item>
-						</el-menu-item-group>
-						<el-menu-item-group title="分组2">
-							<el-menu-item index="1-3">选项3</el-menu-item>
-						</el-menu-item-group>
-						<el-submenu index="1-4">
-							<template slot="title">选项4</template>
-							<el-menu-item index="1-4-1">选项1</el-menu-item>
-						</el-submenu>
+						
+						<el-menu-item index="1-1">选项1</el-menu-item>
+						<el-menu-item index="1-2">选项2</el-menu-item>
+						<el-menu-item index="1-3">选项3</el-menu-item>
+						
 					</el-submenu>
 					<el-menu-item index="2" @click="goToPage('map')">
-						<i class="el-icon-menu"></i>
+						<i class="el-icon-map-location"></i>
 						<span slot="title">地图</span>
 					</el-menu-item>
 					<el-menu-item index="3" @click="goToPage('student')">
@@ -83,6 +76,7 @@
 					<el-menu-item index="6"
 						style="display: flex; flex-direction: row; text-align: center; height: 60px;">
 						<img class="col-menu-avatar" :src="require('@/assets/background/background_2.png')">
+						<!-- <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar> -->
 						<!-- <img class="col-menu-avatar" :src="require('@/assets/logo4.png')"> -->
 						<div style="line-height: 60px; margin-left: 10px;">{{user.personName}}</div>
 					</el-menu-item>

@@ -19,27 +19,66 @@
 		</div>
 
 		<div class="navigation-panel">
-			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
-			background-color="#ffffff" active-text-color="#3488ff">
-			  <el-menu-item index="1">详情</el-menu-item>
-			  <el-menu-item index="2" >导航</el-menu-item>
-			  <el-menu-item index="3">路线推荐</el-menu-item>
+			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" background-color="#ffffff"
+				active-text-color="#3488ff">
+				<el-menu-item index="1" @click="setCurFunc('navigation')">导航</el-menu-item>
+				<el-menu-item index="2" @click="setCurFunc('recommend')">路线推荐</el-menu-item>
 			</el-menu>
-			<el-form :model="getPathForm" status-icon :rules="rules" ref="getPathForm" label-width="100px"
-				label-position="top">
-				<el-form-item label="起点">
-					<el-input v-model="getPathForm.startNodeLabel" autocomplete="off" readonly
-						@focus="setStartNode()"></el-input>
-				</el-form-item>
-				<el-form-item label="终点">
-					<el-input v-model="getPathForm.endNodeLabel" autocomplete="off" readonly
-						@focus="setEndNode()"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="submitForm('getPathForm')">提交</el-button>
-					<el-button @click="resetForm('getPathForm')">重置</el-button>
-				</el-form-item>
+			<el-form v-if="curFunc == 'navigation'" :model="getPathForm" status-icon :rules="rules" ref="getPathForm" label-width="100px" label-position="top" style="border-top: 1px solid #efefef;margin-top: 10px;">
+			  <el-form-item label="起点">
+			    <el-input v-model="getPathForm.startNodeLabel" autocomplete="off" readonly @focus="setStartNode()"></el-input>
+			  </el-form-item>
+			  <el-form-item label="终点">
+			    <el-input v-model="getPathForm.endNodeLabel" autocomplete="off" readonly @focus="setEndNode()"></el-input>
+			  </el-form-item>
+			  <el-form-item>
+			    <el-button type="primary" @click="submitForm('getPathForm')" style="display: block; width: 100%;margin-top: 20px;">提交</el-button>
+			  </el-form-item>
+			  <el-form-item>
+			    <el-button @click="resetForm('getPathForm')" style="display: block; width: 100%;margin-top: 20px;">重置</el-button>
+			  </el-form-item>
 			</el-form>
+
+			<!-- 路线推荐 -->
+			<el-collapse v-if="curFunc == 'recommend'" v-model="activeName" accordion style="margin-top: 10px;">
+				<el-collapse-item title="推荐路线 1" name="1">
+				  <el-timeline style="padding-left: 15px; text-align: left;">
+				    <el-timeline-item v-for="(activity, index) in activities1" :key="index"
+				      style="padding-bottom: 4px;" :type="activity.type" :color="activity.color"
+				      :size="activity.size">
+				      {{activity.content}}
+				    </el-timeline-item>
+				  </el-timeline>
+				  <div style="display: flex; justify-content: center;">
+				    <el-button style="font-size: 13px; margin-bottom: 10px;" @click="showPath('1')">查看地图路线</el-button>
+				  </div>
+				</el-collapse-item>
+				<el-collapse-item title="推荐路线 2" name="2">
+					<el-timeline style="padding-left: 15px;">
+						<el-timeline-item v-for="(activity, index) in activities2" :key="index"
+							style="padding-bottom: 4px;" :type="activity.type" :color="activity.color"
+							:size="activity.size">
+							{{activity.content}}
+						</el-timeline-item>
+					</el-timeline>
+					<div style="display: flex; justify-content: center;">
+					  <el-button style="font-size: 13px; margin-bottom: 10px;" @click="showPath('2')">查看地图路线</el-button>
+					</div>
+				</el-collapse-item>
+				<el-collapse-item title="推荐路线 3" name="3">
+					<el-timeline style="padding-left: 15px;">
+						<el-timeline-item v-for="(activity, index) in activities3" :key="index"
+							style="padding-bottom: 4px;" :type="activity.type" :color="activity.color"
+							:size="activity.size">
+							{{activity.content}}
+						</el-timeline-item>
+					</el-timeline>
+					<div style="display: flex; justify-content: center;">
+					  <el-button style="font-size: 13px; margin-bottom: 10px;" @click="showPath('3')">查看地图路线</el-button>
+					</div>
+				</el-collapse-item>
+			</el-collapse>
+
 		</div>
 
 
@@ -74,13 +113,129 @@
 				}
 			};
 			return {
+				activities1: [{
+					content: '大门',
+					size: 'large',
+					type: 'primary',
+				}, {
+					content: '科学教育馆',
+					color: '#0bbd87'
+				}, {
+					content: '剧院',
+					color: '#0bbd87'
+				}, {
+					content: '餐厅',
+					color: '#0bbd87'
+				}, {
+					content: '天鹅',
+					color: '#0bbd87'
+				}, {
+					content: '孔雀',
+					color: '#0bbd87'
+				}, {
+					content: '城堡',
+					color: '#0bbd87'
+				}, {
+					content: '商店',
+					color: '#0bbd87'
+				}, {
+					content: '博物馆',
+					color: '#0bbd87'
+				}, {
+					content: '摩天轮',
+					color: '#0bbd87'
+				}, {
+					content: '大门',
+					color: '#fd6647'
+				}],
+				activities2: [{
+					content: '大门',
+					size: 'large',
+					type: 'primary',
+				}, {
+					content: '摩天轮',
+					color: '#0bbd87'
+				}, {
+					content: '博物馆',
+					color: '#0bbd87'
+				}, {
+					content: '城堡',
+					color: '#0bbd87'
+				}, {
+					content: '孔雀',
+					color: '#0bbd87'
+				}, {
+					content: '天鹅',
+					color: '#0bbd87'
+				}, {
+					content: '剧院',
+					color: '#0bbd87'
+				}, {
+					content: '科学教育馆',
+					color: '#0bbd87'
+				}, {
+					content: '大门',
+					color: '#fd6647'
+				}],
+				activities3: [{
+					content: '大门',
+					size: 'large',
+					type: 'primary',
+				}, {
+					content: '摩天轮',
+					color: '#0bbd87'
+				}, {
+					content: '咖啡店',
+					color: '#0bbd87'
+				}, {
+					content: '博物馆',
+					color: '#0bbd87'
+				}, {
+					content: '商店',
+					color: '#0bbd87'
+				}, {
+					content: '城堡',
+					color: '#0bbd87'
+				}, {
+					content: '孔雀',
+					color: '#0bbd87'
+				}, {
+					content: '天鹅',
+					color: '#0bbd87'
+				}, {
+					content: '餐厅',
+					color: '#0bbd87'
+				}, {
+					content: '剧院',
+					color: '#0bbd87'
+				}, {
+					content: '科学教育馆',
+					color: '#0bbd87'
+				}, {
+					content: '大门',
+					color: '#fd6647'
+				}],
+				activeName: "0",
+				path1: ['gate', 't10', 't12', 'education', 't12', 't13', 't14', 'opera', 't14', 't22', 'hotel', 'rest',
+					'swan', 'peafowl', 't16', 't17', 'town', 't18', 't19', 't20', 't21', 'store1', 't1', 't3', 't4',
+					'museum', 't6', 'wheel', 't7', 't8', 't9', 't10', 'gate'
+				],
+				path2: ['gate', 't10', 't9', 't8', 't7', 'wheel', 't6', 'museum', 't24', 't28', 't19', 't18', 'town',
+					't17', 't16', 'peafowl', 'swan', 'peafowl', 't16', 't15', 't14', 'opera', 't14', 't13', 't12',
+					'education', 't12', 't10', 'gate'
+				],
+				path3: ['gate', 't10', 't9', 't8', 't7', 'wheel', 'coffee', 't2', 'museum', 't4', 't3', 't1', 'store1',
+					't21', 't20', 't19', 't18', 'town', 't17', 't16', 'peafowl', 'swan', 'rest', 'hotel', 't22', 't14',
+					'opera', 't14', 't13', 't12', 'education', 't12', 't10', 'gate'
+				],
+				curFunc: "navigation",
 				activeIndex: '1',
 				curNavigationState: "start",
 				isStart: false,
 				getPathForm: {
-					startNode: '',
+					startNode: 'gate',
 					endNode: '',
-					startNodeLabel: '',
+					startNodeLabel: '大门',
 					endNodeLabel: '',
 				},
 				resultPath: [],
@@ -118,6 +273,18 @@
 			},
 		},
 		methods: {
+			showPath(i) {
+				if (i == '1') {
+					this.highlightPath(this.path1);
+				} else if (i == '2') {
+					this.highlightPath(this.path2);
+				} else {
+					this.highlightPath(this.path3);
+				}
+			},
+			setCurFunc(str) {
+				this.curFunc = str;
+			},
 			clickIma() {
 				this.$message.success('点击成功');
 			},
@@ -159,6 +326,8 @@
 			resetForm(formName) {
 				this.getPathForm.startNode = "";
 				this.getPathForm.endNode = "";
+				this.getPathForm.startNodeLabel = "";
+				this.getPathForm.endNodeLabel = "";
 				let path = [];
 				this.highlightPath(path);
 
@@ -261,24 +430,37 @@
 		margin-left: 30px;
 		margin-right: 20px;
 		padding: 20px;
+		padding-top: 15px;
 		border-radius: 15px;
 		box-shadow: 0px 2px 6px 6px rgba(155, 155, 155, 0.3);
 	}
-	li.el-menu-item{
+
+	li.el-menu-item {
 		height: 40px;
 		line-height: 40px;
 		background-color: #ffffff;
 		border-radius: 7px;
 		border: none;
 	}
+
 	/* li.el-menu-item:hover{
 		border: none;
 		background-color: #ffffff;
 		font-weight: 500;
 	} */
-	li.el-menu-item.is-active{
+	li.el-menu-item.is-active {
 		border: none;
 		background-color: #ffffff;
 		font-weight: 500;
+	}
+
+	/deep/ .el-collapse-item__content {
+		padding-bottom: 0;
+	}
+	/deep/ label.el-form-item__label{
+		padding: 0;
+	}
+	/deep/ div.el-form-item.el-form-item--feedback{
+		margin-bottom: 0px;
 	}
 </style>
