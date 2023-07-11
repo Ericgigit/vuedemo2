@@ -8,9 +8,9 @@
 	export default {
 		data() {
 			return {
-				startNode:"test1",
-				endNode:"test2",
-				clickNode:"",
+				startNode: "test1",
+				endNode: "test2",
+				clickNode: "",
 				mousePosition: '',
 				data: {
 					nodes: [{
@@ -22,7 +22,7 @@
 						},
 						{
 							id: 'store1',
-							label: '\n商店1',
+							label: '商店',
 							x: "66px",
 							y: "175px",
 							image: require('@/assets/flag6.png'),
@@ -255,6 +255,13 @@
 							image: require('@/assets/flag6.png'),
 						},
 						{
+							id: 'peafowl',
+							label: '孔雀',
+							x: "405px",
+							y: "147px",
+							image: require('@/assets/flag6.png'),
+						},
+						{
 							id: 't23',
 							label: '',
 							x: 151,
@@ -327,13 +334,13 @@
 				const options = {
 					nodes: {
 						shape: 'image',
-						size: 18,
+						size: 15,
 						font: {
 							color: '#0d2868',
 							size: 15,
 
 						},
-						// fixed: true,
+						fixed: true,
 					},
 					edges: {
 						color: {
@@ -373,14 +380,19 @@
 					const nodeId = event.nodes[0];
 					if (nodeId) {
 						const node = this.network.body.nodes[nodeId];
-						console.log('Node x:', node.x, 'Node y:', node.y);
+						console.log(node)
+						console.log('Node x:', node.x, 'Node y:', node.y, 'Node label:', node.options.label);
+						
+						if (this.$parent.curNavigationState == "start") {
+							this.$parent.getPathForm.startNode = nodeId;
+							this.$parent.getPathForm.startNodeLabel = node.options.label;
+						} else {
+							this.$parent.getPathForm.endNode = nodeId;
+							this.$parent.getPathForm.endNodeLabel = node.options.label;
+						}
 					}
-					if(this.$parent.curNavigationState == "start"){
-						this.$parent.getPathForm.startNode = nodeId;
-					}else{
-						this.$parent.getPathForm.endNode = nodeId;
-					}
-					
+
+
 
 					this.$message.success('成功点击：' + nodeId);
 					console.log('Clicked node:', nodeId);
@@ -390,7 +402,7 @@
 
 			},
 			drawLine() {
-				
+
 			},
 			addEdge(nodeId1, nodeId2) {
 				console.log(nodeId1, nodeId2)
@@ -400,13 +412,13 @@
 				};
 				this.network.body.data.edges.add(edge);
 			},
-			clearAllEdge(){
+			clearAllEdge() {
 				// 获取边的数据集
 				const edgesDataSet = this.network.body.data.edges;
-				
+
 				// 移除所有边
 				edgesDataSet.clear();
-			}
+			},
 
 		}
 	}

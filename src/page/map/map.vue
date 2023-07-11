@@ -18,19 +18,30 @@
 			</div>
 		</div>
 
-		<el-form :model="getPathForm" status-icon :rules="rules" ref="getPathForm" label-width="100px"
-			class="navigation-panel" label-position="top">
-			<el-form-item label="密码">
-				<el-input v-model="getPathForm.startNode" autocomplete="off" @focus="setStartNode()"></el-input>
-			</el-form-item>
-			<el-form-item label="确认密码" prop="checkPass">
-				<el-input v-model="getPathForm.endNode" autocomplete="off" @focus="setEndNode()"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="submitForm('getPathForm')">提交</el-button>
-				<el-button @click="resetForm('getPathForm')">重置</el-button>
-			</el-form-item>
-		</el-form>
+		<div class="navigation-panel">
+			<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+			background-color="#ffffff" active-text-color="#3488ff">
+			  <el-menu-item index="1">详情</el-menu-item>
+			  <el-menu-item index="2" >导航</el-menu-item>
+			  <el-menu-item index="3">路线推荐</el-menu-item>
+			</el-menu>
+			<el-form :model="getPathForm" status-icon :rules="rules" ref="getPathForm" label-width="100px"
+				label-position="top">
+				<el-form-item label="起点">
+					<el-input v-model="getPathForm.startNodeLabel" autocomplete="off" readonly
+						@focus="setStartNode()"></el-input>
+				</el-form-item>
+				<el-form-item label="终点">
+					<el-input v-model="getPathForm.endNodeLabel" autocomplete="off" readonly
+						@focus="setEndNode()"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="submitForm('getPathForm')">提交</el-button>
+					<el-button @click="resetForm('getPathForm')">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+
 
 	</div>
 
@@ -63,11 +74,14 @@
 				}
 			};
 			return {
+				activeIndex: '1',
 				curNavigationState: "start",
 				isStart: false,
 				getPathForm: {
 					startNode: '',
 					endNode: '',
+					startNodeLabel: '',
+					endNodeLabel: '',
 				},
 				resultPath: [],
 
@@ -108,7 +122,7 @@
 				this.$message.success('点击成功');
 			},
 			submitForm(formName) {
-				
+
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						let list = {
@@ -126,20 +140,20 @@
 							.catch(error => {
 								console.error('Error:', error);
 							});
-							
-						
+
+
 					} else {
 						console.log('error submit!!');
 						return false;
 					}
 				});
 			},
-			highlightPath(path){
+			highlightPath(path) {
 				const childComponent = this.$children[0];
 				childComponent.clearAllEdge();
-				
-				for(let i=0;i<path.length-1;i++){
-					childComponent.addEdge(path[i], path[i+1]);
+
+				for (let i = 0; i < path.length - 1; i++) {
+					childComponent.addEdge(path[i], path[i + 1]);
 				}
 			},
 			resetForm(formName) {
@@ -147,7 +161,7 @@
 				this.getPathForm.endNode = "";
 				let path = [];
 				this.highlightPath(path);
-				
+
 			},
 			setStartNode() {
 				this.curNavigationState = "start";
@@ -249,5 +263,22 @@
 		padding: 20px;
 		border-radius: 15px;
 		box-shadow: 0px 2px 6px 6px rgba(155, 155, 155, 0.3);
+	}
+	li.el-menu-item{
+		height: 40px;
+		line-height: 40px;
+		background-color: #ffffff;
+		border-radius: 7px;
+		border: none;
+	}
+	/* li.el-menu-item:hover{
+		border: none;
+		background-color: #ffffff;
+		font-weight: 500;
+	} */
+	li.el-menu-item.is-active{
+		border: none;
+		background-color: #ffffff;
+		font-weight: 500;
 	}
 </style>
