@@ -224,10 +224,10 @@
 			},
 		},
 		mounted() {
-			//removeStorage("user");
 			let user = JSON.parse(getStorage("user"));
-			console.log(user)
+			
 			if (user) {
+				console.log(user)
 				//跳转至主页
 				this.$router.push({
 					name: "home"
@@ -244,7 +244,7 @@
 
 	.login {
 		/* background-color: rgb(53, 70, 92); */
-		background: url("../../assets/background/background_4.png");
+		background: url("../../assets/background/background_8.jpeg");
 		position: fixed;
 		background-size: cover;
 		background-repeat: no-repeat;
@@ -256,13 +256,13 @@
 	}
 
 	.login-main {
-		background-color: rgba(100, 100, 100, 0.3);
+		background-color: rgba(180, 180, 180, 0.3);
 		backdrop-filter: blur(15px);
 		margin: auto;
 		border-radius: 15px;
 		width: 700px;
 		height: 440px;
-		/* box-shadow: 0px 1px 8px 8px rgba(103, 100, 108, 1.0); */
+		/* box-shadow: 0px 1px 8px 8px rgba(106, 107, 108, 0.2); */
 	}
 
 	.login-main .login-picture {

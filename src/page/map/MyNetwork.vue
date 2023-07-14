@@ -40,7 +40,7 @@
 						{
 							id: 'store1',
 							label: '商店',
-							x: "66px",
+							x: "71px",
 							y: "175px",
 							image: require('@/assets/flag6.png'),
 							introImage: require('@/assets/introduction/store.jpg'),

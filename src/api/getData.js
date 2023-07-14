@@ -99,6 +99,44 @@ export function getPath(data) {
 	})
 }
 
+//----------------------------应急消息API------------------------------
+//提交应急消息
+export function submitEmergeForm(data) {
+	return request({
+		url: '/emergeMsg/publishMsg',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+//按页获取应急消息
+export function queryEmergeByPage(data) {
+	return request({
+		url: '/emergeMsg/listMsg',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+//根据emergeId删除应急消息
+export function deleteEmergeMsg(data) {
+	return request({
+		url: '/emergeMsg/undoMsg',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+//审批通过
+export function approveEmergeMsg(data) {
+	return request({
+		url: '/emergeMsg/examineMsg',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+//------------------------------学生数据API-------------------------------
 //学生列表
 export function listStudent(data) {
 	return request({

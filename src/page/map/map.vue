@@ -377,7 +377,7 @@
 		padding-top: 20px;
 		padding-left: 10px;
 		padding-bottom: 20px;
-		grid-template-columns: 5fr 2fr;
+		grid-template-columns: 6fr 2fr;
 	}
 
 	.hover-div {
@@ -396,7 +396,6 @@
 		background-position: center;
 		margin: auto;
 		width: 99%;
-		overflow: hidden;
 
 		transition: all 0.4s;
 		-moz-transition: all .4s;

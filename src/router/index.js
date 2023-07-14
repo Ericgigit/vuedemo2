@@ -9,6 +9,10 @@ import hotel from "../page/hotel/hotel";
 import graph from "../page/graph/graph";
 import map from "../page/map/map";
 import complaint from "../page/complaint/complaint";
+import emerge from "../page/emerge/emerge";
+import weather from "../page/weather/weather";
+import webhome from "../page/webhome/webhome";
+
 
 
 Vue.use(Router);
@@ -16,6 +20,14 @@ Vue.use(Router);
 export default new Router({
 	mode: "history",
 	routes: [
+		{
+		  path:'/',
+		  name:'webhome',
+		  component:webhome,
+		  meta:{
+			  title:"官网"
+		  }
+		},
 		{
 		  path:'/',
 		  name:'login',
@@ -70,6 +82,22 @@ export default new Router({
 			  	component:map,
 			  	meta:{
 			  		title:"地图"
+			  	}
+			  },
+			  {
+			  	path:'/emerge',
+			  	name:'emerge',
+			  	component:emerge,
+			  	meta:{
+			  		title:"应急消息"
+			  	}
+			  },
+			  {
+			  	path:'/weather',
+			  	name:'weather',
+			  	component:weather,
+			  	meta:{
+			  		title:"天气与路况"
 			  	}
 			  },
 			  {

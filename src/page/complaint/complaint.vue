@@ -1,5 +1,5 @@
 <template>
-	<div class="my-outline-border">
+	<div class="my-outline-border" v-loading="init_loading">
 		<el-button v-if="user.personPower == average" class="creat-complaint-button" type="primary"
 			@click="creatComplaint()">新建投诉</el-button>
 		<el-button v-if="user.personPower == average" class="creat-complaint-button" type="primary"
@@ -16,8 +16,8 @@
 
 		<el-divider></el-divider>
 		<div v-for="(item,index) in suitList" v-bind:key="index" v-loading="loading">
-			<el-descriptions class="margin-top" :title="description_title+item.suitId" :column="2"
-				:border=active_border>
+			<el-descriptions :title="description_title+item.suitId" :column="2"
+				:border="active_border">
 
 				<template slot="extra">
 					<el-select v-if="user.personPower == manager" v-model="item.dealId" clearable placeholder="分配处理人员"
@@ -42,12 +42,12 @@
 				<el-descriptions-item label="投诉内容">{{item.submitContext}}</el-descriptions-item>
 				<el-descriptions-item v-if="item.submitIma" label="投诉图片">
 					<!-- 图片显示区域 -->
-					<img v-if="item.submitIma" style="width: auto; height: 80px;"
+					<img v-if="item.submitIma" style="width: auto; height: 80px;border-radius: 5px;"
 						:src="'data:image/png;base64,'+item.submitIma" />
 				</el-descriptions-item>
 				<el-descriptions-item v-if="item.submitVideo" label="投诉视频">
 					<!-- 视频预览区域 -->
-					<video v-if="item.submitVideo" controls style="width: auto; height: 100px;">
+					<video v-if="item.submitVideo" controls style="width: auto; height: 100px;border-radius: 5px;">
 						<source :src="'data:video/mp4;base64,'+item.submitVideo" />
 					</video>
 				</el-descriptions-item>
@@ -66,19 +66,29 @@
 						<source :src="'data:video/mp4;base64,'+item.dealVideo" />
 					</video>
 				</el-descriptions-item>
+				<!-- 服务评价 -->
+				<el-descriptions-item v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
+				 label="服务评价">
+
+					<el-rate v-if="item.assess" v-model="item.assess" disabled show-score text-color="#ff9900"></el-rate>
+					
+					<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900"></el-rate>
+					<button v-if="!(item.state == complete_state)" class="submit-rate-button"
+						@click="submitRate(item)">提交</button>
+				</el-descriptions-item>
 			</el-descriptions>
 
 
 
-			<el-steps :space="200" :active="item.state" finish-status="success" style="margin-top: 15px;">
-				<el-step title="已提交"></el-step>
+			<el-steps :space="200" :active="item.state" finish-status="success" align-center style="margin-top: 15px;">
+				<el-step title="提交"></el-step>
 				<el-step title="分配处理人员"></el-step>
 				<el-step title="处理投诉"></el-step>
 				<el-step title="评价"></el-step>
-				<el-step title="已结案"></el-step>
+				<el-step title="结案"></el-step>
 			</el-steps>
 
-			<div v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
+			<!-- <div v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
 				class="rate-div">
 				<div v-if="item.assess" style="line-height: 20px; color: gray; font-size: 15px;">评分</div>
 				<el-rate v-if="item.assess" v-model="item.assess" disabled show-score text-color="#ff9900"></el-rate>
@@ -87,13 +97,13 @@
 				<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900"></el-rate>
 				<button v-if="!(item.state == complete_state)" class="submit-rate-button"
 					@click="submitRate(item)">提交</button>
-			</div>
+			</div> -->
 
 			<el-divider></el-divider>
 		</div>
 
 		<!-- 分页组件 -->
-		<el-pagination class="my-pagination-style" background layout="prev, pager, next"
+		<el-pagination class="my-pagination-style" background layout="prev, pager, next" style="margin-bottom: 10px;"
 			:current-page="queryParams.page" :page-size="queryParams.limit" :total="total"
 			@current-change="currentChange" @prev-click="prevClick" @next-click="nextClick">
 		</el-pagination>
@@ -225,6 +235,7 @@
 
 				// 遮罩层
 				loading: true,
+				init_loading: true,
 				// 学生表格数据
 				suitList: [],
 				// 查询参数
@@ -507,6 +518,7 @@
 					console.log(response.datas);
 					this.total = response.total;
 					this.loading = false;
+					this.init_loading = false;
 				});
 			},
 			getUnallocList() {
@@ -590,10 +602,8 @@
 
 <style>
 	.my-outline-border {
-		margin-left: 15px;
-		margin-top: 15px;
-		margin-right: 15px;
-		margin-bottom: 15px;
+		padding-top: 20px;
+		padding-bottom: 60px;
 	}
 
 	.rate-div {
@@ -617,4 +627,5 @@
 		background-color: #409EFF;
 		border: none;
 	}
+	
 </style>
