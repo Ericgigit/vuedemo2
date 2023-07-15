@@ -109,39 +109,39 @@
 			WeatherSeacrh(cityName) {
 
 				const url = 'https://www.yiketianqi.com/free/week?unescape=1&appid=79976529&appsecret=igWM34SU&city=重庆'
-				let weather = JSON.parse(getStorage("weather"));
-				const dayList = weather.data; //天气数据
-				const area = weather.city; //城市名称
-				console.log(dayList, area);
-				//先将WeatherList数组清空
-				this.WeatherList.length = 0;
-				//将dayList的元素遍历一遍送进WeatherList里面
-				dayList.forEach((ele, index, arr) => {
-					this.WeatherList.splice(index, 1, ele);
-				});
-				// //赋值城市名称
-				this.cityName = area;
+				// let weather = JSON.parse(getStorage("weather"));
+				// const dayList = weather.data; //天气数据
+				// const area = weather.city; //城市名称
+				// console.log(dayList, area);
+				// //先将WeatherList数组清空
+				// this.WeatherList.length = 0;
+				// //将dayList的元素遍历一遍送进WeatherList里面
+				// dayList.forEach((ele, index, arr) => {
+				// 	this.WeatherList.splice(index, 1, ele);
+				// });
+				// // //赋值城市名称
+				// this.cityName = area;
 
 				//使用axios发送ajax请求获取数据
-				// axios.get(url).then(
-				// 	response => {
-				// 		//请求成功
-				// 		// console.log(response.data)
-				// 		setStorage("weather", JSON.stringify(response.data));
-				// 		const dayList = response.data.data; //天气数据
-				// 		const area = response.data.city; //城市名称
-				// 		console.log(dayList, area);
-				// 		//先将WeatherList数组清空
-				// 		this.WeatherList.length = 0;
-				// 		//将dayList的元素遍历一遍送进WeatherList里面
-				// 		dayList.forEach((ele, index, arr) => {
-				// 			this.WeatherList.splice(index, 1, ele);
-				// 		});
-				// 		// //赋值城市名称
-				// 		this.cityName = area;
-				// 	}).catch(error => {
-				// 	alert('请求失败');
-				// });
+				axios.get(url).then(
+					response => {
+						//请求成功
+						// console.log(response.data)
+						setStorage("weather", JSON.stringify(response.data));
+						const dayList = response.data.data; //天气数据
+						const area = response.data.city; //城市名称
+						console.log(dayList, area);
+						//先将WeatherList数组清空
+						this.WeatherList.length = 0;
+						//将dayList的元素遍历一遍送进WeatherList里面
+						dayList.forEach((ele, index, arr) => {
+							this.WeatherList.splice(index, 1, ele);
+						});
+						// //赋值城市名称
+						this.cityName = area;
+					}).catch(error => {
+					alert('请求失败');
+				});
 			}, //WeatherSearch-end
 
 			initMap() {

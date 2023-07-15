@@ -2,7 +2,8 @@
 	<div class="my-outline-border">
 		<!-- 列表 开始 -->
 
-		<el-form :model="queryParams" size="small" :inline="true" label-width="68px" style="background-color: aliceblue;padding-top: 20px;padding-left: 20px;">
+		<el-form :model="queryParams" size="small" :inline="true" label-width="68px"
+			style="background-color: aliceblue;padding-top: 20px;padding-left: 20px;">
 
 			<el-form-item label="餐厅名称" prop="restaurantName">
 				<el-input v-model="queryParams.restaurantName" placeholder="请输入餐厅名称" clearable
@@ -13,21 +14,13 @@
 				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
 			</el-form-item>
 		</el-form>
-		<el-divider></el-divider>
 
-
-		<el-row>
+		<el-row style="margin-top: 20px;">
 			<!-- 循环 -->
-
-			<el-col :span="10" v-for="(item,index) in restaurantList" v-bind:key="index" v-loading="loading">
+			<el-col :span="8" v-for="(item,index) in restaurantList" v-bind:key="index" v-loading="loading">
 				<!-- 酒店卡片 -->
-				<el-card :body-style="{ padding: '0px' }">
-					<div style="text-align: center;">
-						<img :src="item.restaurantPicture" style="text-align: center;" class="rest_img_box" />
-
-
-					</div>
-
+				<el-card :body-style="{ padding: '0px' }" style="margin-right: 20px;">
+					<img :src="item.restaurantPicture" style="text-align: center;" class="rest_img_box" />
 
 					<!-- 房间信息 -->
 					<div style="padding: 20px;">
@@ -51,13 +44,6 @@
 						<el-divider>
 
 						</el-divider>
-
-						<div style="border:solid bisque;text-align: center;">
-
-						</div>
-
-
-
 					</div>
 				</el-card>
 
@@ -114,7 +100,7 @@
 		},
 		queryParamsroomSize: 0,
 		methods: {
-			
+
 			/** 查询餐厅列表 */
 			getList() {
 				this.loading = true;
@@ -176,7 +162,7 @@
 	}
 
 	.rest_img_box {
-		width: 250px;
+		width: 100%;
 		height: 250px;
 		/* background: url("https://img.zcool.cn/community/01a7cc5d9ecb5aa8012060beec2159.jpg@1280w_1l_2o_100sh.jpg"); */
 		background-size: cover;

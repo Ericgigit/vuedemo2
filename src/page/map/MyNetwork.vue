@@ -448,7 +448,7 @@
 						}
 					}
 
-					this.$message.success('成功点击：' + nodeId);
+					// this.$message.success('成功点击：' + nodeId);
 					console.log('Clicked node:', nodeId);
 				});
 				// 监听鼠标悬浮事件

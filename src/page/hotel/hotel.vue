@@ -14,23 +14,22 @@
 				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
 				<el-button type="primary" plain icon="el-icon-refresh" size="mini"
 					@click="handleRefresh()">刷新榜单查看房间余量</el-button>
-				<el-button type="success" plain icon="el-icon-refresh" size="mini"
+				<el-button type="success" plain size="mini"
 					@click="openMyOrders()">我的订单</el-button>
 
 			</el-form-item>
 		</el-form>
-		<el-divider></el-divider>
 		<el-row>
 			<!-- 循环 -->
 
-			<el-col :span="7" v-for="(item,index) in hotelList" v-if="item.hotelClass!=0" v-bind:key="index"
-				v-loading="loading">
+			<el-col :span="7" v-for="(item,index) in hotelList"  v-bind:key="index"
+				v-loading="loading" style="margin-top: 20px;">
 				<!-- 酒店卡片 -->
-				<el-card :body-style="{ padding: '0px' }">
+				<el-card :body-style="{ padding: '0px' }" style="margin-right: 20px; height: 600px;">
 
-					<div style="text-align: center;">
-						<img :src="item.hotelPicture" style="text-align: center;" class="rest_img_box" />
-					</div>
+					<!-- <div style="text-align: center;width: 100%;"> -->
+						<img :src="item.hotelPicture" style="text-align: center;width: 100%;" class="rest_img_box" />
+					<!-- </div> -->
 
 					<!-- 房间信息 -->
 					<div style="padding: 20px;">
@@ -57,10 +56,10 @@
 						<el-divider>
 
 						</el-divider>
-						<div style="text-align: center;">
+						<div v-if="item.hotelClass" style="text-align: center;">
 							酒店星级
 						</div>
-						<div style="text-align: center;">
+						<div  style="text-align: center;">
 							<i v-for="count1 in item.hotelClass" class="el-icon-star-on"></i>
 						</div>
 						<!-- 查询预定房间信息 -->
@@ -628,7 +627,7 @@
 	}
 
 	.rest_img_box {
-		width: 250px;
+		width: 100%;
 		height: 250px;
 		/* background: url("https://img.zcool.cn/community/01a7cc5d9ecb5aa8012060beec2159.jpg@1280w_1l_2o_100sh.jpg"); */
 		background-size: cover;

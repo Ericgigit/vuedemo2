@@ -96,7 +96,7 @@
 				form: {
 					personName: "",
 					personPhone: "",
-					personpower: null,
+					personPower: null,
 					birth: "",
 					password: '',
 					checkPass: '',
@@ -200,14 +200,14 @@
 				this.form = {
 					pname: null,
 					birth: null,
-					pphone: null,
+					personPhone: null,
 				};
 			},
 			/** 提交按钮 */
 			submitForm() {
 				this.$refs["form"].validate(valid => {
 					if (valid) {
-						this.form.ppower = 1;
+						this.form.personPower = 1;
 						console.log(this.form);
 						register(this.form).then(response => {
 							this.$message.success('新增成功');
