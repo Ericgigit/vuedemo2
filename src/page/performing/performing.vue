@@ -1,112 +1,52 @@
 <template>
-	<div class="my-outline-border" v-loading="init_loading">
-		<el-button v-if="user.personPower == average" class="creat-complaint-button" type="primary"
-			@click="creatComplaint()">新建投诉</el-button>
-		<el-button v-if="user.personPower == average" class="creat-complaint-button" type="primary"
-			@click="getList()">查询投诉</el-button>
-		<el-button v-if="user.personPower == manager" class="creat-complaint-button" type="primary"
-			@click="getList()">所有投诉</el-button>
-		<el-button v-if="user.personPower == manager" class="creat-complaint-button" type="primary"
-			@click="getUnallocList()">未分配投诉</el-button>
-		<el-button v-if="user.personPower == manager" class="creat-complaint-button" type="primary"
-			@click="getUncompleteList()">待结案投诉</el-button>
+	<div class="my-outline-border">
+		<el-form :model="queryParams" size="small" :inline="true" label-width="68px" 
+		style="background-color: aliceblue;padding-top: 20px;padding-left: 20px;">
 
-
+			<el-form-item label="演出名称" prop="performingName">
+				<el-input v-model="queryParams.performingName" placeholder="请输入演出名称" clearable
+					@keyup.enter.native="handleQuery()" />
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery()">搜索</el-button>
+				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery()">重置</el-button>
+			</el-form-item>
+		</el-form>
 		<el-switch v-model="active_border" active-text="开启边框" style="width: 100%; margin-top: 15px;"></el-switch>
 
 		<el-divider></el-divider>
-		<div v-for="(item,index) in suitList" v-bind:key="index" v-loading="loading">
-			<el-descriptions :title="description_title+item.suitId" :column="2" :border="active_border">
+		<div v-for="(item,index) in performingList" v-bind:key="index" v-loading="loading">
+			<el-descriptions class="margin-top" :title="description_title+item.performingId" :column="2"
+				:border=active_border>
 
 				<template slot="extra">
-					<el-select v-if="user.personPower == manager" v-model="item.dealId" clearable placeholder="分配处理人员"
-						style="margin-right: 10px;">
-						<el-option v-for="deal in options" :key="deal.value" :label="deal.label" :value="deal.value">
-						</el-option>
-					</el-select>
-					<el-button v-if="user.personPower == manager && item.state == alloc_state" type="primary"
-						size="small" @click="confirmAlloc(item.suitId,item.dealId)">分配</el-button>
-					<el-button v-if="user.personPower == dealer" type="primary" size="small"
-						@click="dealButton(item)">处理</el-button>
 
-					<el-button type="primary" size="small" @click="undoSuitButton(item.suitId)">撤回投诉</el-button>
-
-					<el-button v-if="user.personPower == manager && item.state == complete_state" type="primary"
-						size="small" @click="fillSuitButton(item)">结案</el-button>
 				</template>
 
-				<el-descriptions-item label="投诉人">{{item.submitName}}</el-descriptions-item>
-				<el-descriptions-item label="手机号">{{item.submitPhone}}</el-descriptions-item>
+				<el-descriptions-item label="演出名称">{{item.performingName}}</el-descriptions-item>
+				<el-descriptions-item label="举办方联系方式">{{item.performingPhone}}</el-descriptions-item>
 
-				<el-descriptions-item label="投诉内容">{{item.submitContext}}</el-descriptions-item>
-				<el-descriptions-item v-if="item.submitIma" label="投诉图片">
-					<!-- 图片显示区域 -->
-					<img v-if="item.submitIma" style="width: auto; height: 80px;border-radius: 5px;"
-						:src="'data:image/png;base64,'+item.submitIma" />
+				<el-descriptions-item label="演出标签">{{item.performingContext}}</el-descriptions-item>
+
+				<el-descriptions-item label="演出时间">
+					{{item.performingTime}}
 				</el-descriptions-item>
-				<el-descriptions-item v-if="item.submitVideo" label="投诉视频">
-					<!-- 视频预览区域 -->
-					<video v-if="item.submitVideo" controls style="width: auto; height: 100px;border-radius: 5px;">
-						<source :src="'data:video/mp4;base64,'+item.submitVideo" />
-					</video>
+				<el-descriptions-item label="演出地址">
+					{{item.performingSite}}
 				</el-descriptions-item>
 
-				<el-descriptions-item v-if="item.dealContext" label="处理意见">
-					{{item.dealContext}}
-				</el-descriptions-item>
-				<el-descriptions-item v-if="item.dealIma" label="处理图片">
-					<!-- 图片显示区域 -->
-					<img v-if="item.dealIma" style="width: auto; height: 80px;"
-						:src="'data:image/png;base64,'+item.dealIma" />
-				</el-descriptions-item>
-				<el-descriptions-item v-if="item.dealVideo" label="处理视频">
-					<!-- 视频预览区域 -->
-					<video v-if="item.dealVideo" controls style="width: auto; height: 100px;">
-						<source :src="'data:video/mp4;base64,'+item.dealVideo" />
-					</video>
-				</el-descriptions-item>
-				<!-- 服务评价 -->
-				<el-descriptions-item
-					v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
-					label="服务评价">
-					<div style="display: flex;flex-direction: row;">
-						<el-rate v-if="item.assess" v-model="item.assess" disabled show-score
-							text-color="#ff9900"></el-rate>
-
-						<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900"></el-rate>
-						<button v-if="!(item.state == complete_state)" class="submit-rate-button" type="default"
-							@click="submitRate(item)">提交</button>
-					</div>
-
-				</el-descriptions-item>
 			</el-descriptions>
 
 
 
-			<el-steps :space="200" :active="item.state" finish-status="success" align-center style="margin-top: 15px;">
-				<el-step title="提交"></el-step>
-				<el-step title="分配处理人员"></el-step>
-				<el-step title="处理投诉"></el-step>
-				<el-step title="评价"></el-step>
-				<el-step title="结案"></el-step>
-			</el-steps>
 
-			<!-- <div v-if="(item.state == finish_state || item.state == complete_state) && user.personPower == average"
-				class="rate-div">
-				<div v-if="item.assess" style="line-height: 20px; color: gray; font-size: 15px;">评分</div>
-				<el-rate v-if="item.assess" v-model="item.assess" disabled show-score text-color="#ff9900"></el-rate>
 
-				<div v-if="!item.assess" style="line-height: 20px; color: gray; font-size: 15px;">请评分</div>
-				<el-rate v-if="!item.assess" v-model="item.assess" show-score text-color="#ff9900"></el-rate>
-				<button v-if="!(item.state == complete_state)" class="submit-rate-button"
-					@click="submitRate(item)">提交</button>
-			</div> -->
 
 			<el-divider></el-divider>
 		</div>
 
 		<!-- 分页组件 -->
-		<el-pagination class="my-pagination-style" background layout="prev, pager, next" style="margin-bottom: 10px;"
+		<el-pagination class="my-pagination-style" background layout="prev, pager, next"
 			:current-page="queryParams.page" :page-size="queryParams.limit" :total="total"
 			@current-change="currentChange" @prev-click="prevClick" @next-click="nextClick">
 		</el-pagination>
@@ -121,18 +61,18 @@
 				</el-form-item>
 
 				<el-form-item label="上传图片:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="#" :http-request="httpImgRequest"
-						:before-upload="beforeUpload" :on-exceed="handleExceed" :auto-upload="false"
-						accept=".jpg,.png,.jpeg" :on-change="changeCarPicture" :limit="1" :file-list="fileListPicture">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpImgRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeCarPicture" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
 				</el-form-item>
 
 				<el-form-item label="上传视频:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="#" :http-request="httpVideoRequest"
-						:before-upload="beforeUploadVideo" :on-exceed="handleExceed" :auto-upload="false" accept=".mp4"
-						:on-change="changeVideo" :limit="1" :file-list="fileListPicture">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpVideoRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeVideo" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
@@ -152,17 +92,17 @@
 				</el-form-item>
 
 				<el-form-item label="上传图片:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="#" :http-request="httpImgRequest"
-						:before-upload="beforeUpload" :on-exceed="handleExceed" :auto-upload="false"
-						accept=".jpg,.png,.jpeg" :on-change="changeCarPicture" :limit="1">
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpImgRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
+						:on-change="changeCarPicture" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
 					</el-upload>
 				</el-form-item>
 
 				<el-form-item label="上传视频:" prop="excel">
-					<el-upload class="upload-demo" ref="upload" action="#" :http-request="httpVideoRequest"
-						:before-upload="beforeUploadVideo" :on-exceed="handleExceed" :auto-upload="false" accept=".mp4"
+					<el-upload class="upload-demo" ref="upload" action="http://192.168.27.30:8080/suit/upload"
+						:http-request="httpVideoRequest" :before-upload="beforeUpload" :on-exceed="handleExceed"
 						:on-change="changeVideo" :limit="1">
 						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
 						<div slot="tip" class="el-upload__tip">上传文件，且不超过5M</div>
@@ -181,13 +121,9 @@
 
 <script>
 	import {
-		submitSuitForm,
-		submitDealSuitForm,
-		querySuitByPage,
-		undoSuit,
-		allocSuit,
-		assessSuit,
-		fillSuit,
+
+
+		queryPerformingByPage
 	} from '@/api/getData.js';
 	import {
 		getStorage,
@@ -203,8 +139,7 @@
 					submitId: '',
 				},
 				//存放上传文件
-				fileListPicture: [],
-				fileListVideo: [],
+				fileList: [],
 				Picture: null,
 				Video: null,
 
@@ -232,26 +167,23 @@
 				manager: 3,
 				dealer: 2,
 				average: 1,
-				alloc_state: 1,
 				finish_state: 3,
 				complete_state: 4,
 
 				// 遮罩层
 				loading: true,
-				init_loading: true,
-				// 学生表格数据
-				suitList: [],
+				// 演出数据
+				performingList: [],
 				// 查询参数
 				queryParams: {
 					page: 1,
-					limit: 3,
-					submitId: null,
-					state: null,
-					dealId: null,
+					limit: 10,
+					performingId: "",
+
 				},
 				//总条数
 				total: 0,
-				description_title: "投诉单编号 ",
+				description_title: "演出编号 ",
 				active_border: true,
 				file: {
 					url: "",
@@ -298,6 +230,9 @@
 			};
 		},
 		methods: {
+			handleQuery() {
+				this.getList();
+			},
 			changeCarPicture(file) {
 				// 图片转成base64上传
 				let reader = new FileReader();
@@ -306,7 +241,7 @@
 					let _base64 = reader.result;
 					let BASE64 = _base64.split(",");
 					this.Picture = BASE64[1]; //赋值
-					// console.log(this.carPicture);
+					console.log(this.carPicture);
 				};
 				reader.readAsDataURL(file.raw);
 			},
@@ -318,48 +253,31 @@
 					let _base64 = reader.result;
 					let BASE64 = _base64.split(",");
 					this.Video = BASE64[1]; //赋值
-					// console.log(this.Video);
+					console.log(this.Video);
 				};
 				reader.readAsDataURL(file.raw);
 			},
 			// 覆盖默认的上传行为，可以自定义上传的实现，将上传的文件依次添加到fileList数组中,支持多个文件
 			httpImgRequest(option) {
-				this.fileListPicture.push(option)
+				this.fileList.push(option)
 			},
 			httpVideoRequest(option) {
-				this.fileListVideo.push(option)
+				this.fileList.push(option)
 			},
 			// 上传前处理
 			beforeUpload(file) {
 				let fileSize = file.size
-				const FIVE_M = 16 * 1024 * 1024;
-				//大于16M，不允许上传
+				const FIVE_M = 5 * 1024 * 1024;
+				//大于5M，不允许上传
 				if (fileSize > FIVE_M) {
-					this.$message.error("最大上传16MB")
+					this.$message.error("最大上传5MB")
 					return false
 				}
-				//判断文件类型，必须是JPG、JPEG、PNG格式
-				let types = ['image/jpeg', 'image/jpg', 'image/png'];
+				//判断文件类型，必须是xlsx格式
+				let types = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
 				const isImage = types.includes(file.type);
 				if (!isImage) {
 					this.$message.error('上传图片只能是 JPG、JPEG、PNG 格式!');
-					return false;
-				}
-				return true
-			},
-			beforeUploadVideo(file) {
-				let fileSize = file.size
-				const FIVE_M = 16 * 1024 * 1024;
-				//大于16M，不允许上传
-				if (fileSize > FIVE_M) {
-					this.$message.error("最大上传16MB")
-					return false
-				}
-				//判断文件类型，必须是mp4格式
-				let types = ['video/mp4'];
-				const isImage = types.includes(file.type);
-				if (!isImage) {
-					this.$message.error('上传视频只能是 mp4 格式!');
 					return false;
 				}
 				return true
@@ -382,6 +300,15 @@
 					submitContext: this.suit_form.submitContext,
 				}
 				console.log(this.fileList);
+				// 将上传文件数组依次添加到参数paramsData中
+				// this.fileList.forEach((x) => {
+				// 	paramsData.append('file', x.file)
+				// });
+				// // 将输入表单数据添加到params表单中
+				// params.append('kgCode', this.importForm.kgCode)
+				// params.append('targetUrl', this.importForm.targetUrl)
+				// params.append('suitId', this.importForm.suitId)
+				// params.append('submitId', this.importForm.submitId)
 
 				submitSuitForm(params).then(res => {
 					console.log(res);
@@ -389,8 +316,25 @@
 					this.open = false;
 					this.getList();
 				});
-				this.resetForm();
+				//这里根据自己封装的axios来进行调用后端接口
+				// this.httpPostWithLoading(paramsData).then(match => {
+				// 	if (match.success) {
+				// 		this.$message({
+				// 			message: "导入成功",
+				// 			type: "success"
+				// 		})
+				// 	} else {
+				// 		this.$message({
+				// 			message: "导入失败",
+				// 			type: "error"
+				// 		})
+				// 	}
+				// 	this.$refs.importFormRef.resetFields() //清除表单信息
+				this.$refs.upload.clearFiles() //清空上传列表
+				this.fileList = [] //集合清空
+				// 	this.dialogVisible1 = false //关闭对话框
 
+				// })
 			},
 
 			creatComplaint() {
@@ -413,8 +357,6 @@
 						return false;
 					}
 				});
-				this.resetForm();
-
 			},
 			resetForm() {
 				this.suit_form.suitId = null;
@@ -422,8 +364,8 @@
 				this.Video = null;
 				this.suit_form.dealContext = null;
 				this.suit_form.submitContext = null;
-				this.fileListPicture = [] //集合清空
-				this.fileListVideo = [] //集合清空
+				this.$refs.upload.clearFiles() //清空上传列表
+				this.fileList = [] //集合清空
 			},
 			submitDealForm() {
 				//dealButton中已经设置suitId
@@ -506,22 +448,12 @@
 			/** 查询学生列表 */
 			getList() {
 				this.loading = true;
-				if (this.user.personPower == 1) {
-					this.queryParams.submitId = this.user.personId;
-				} else if (this.user.personPower == 2) {
-					this.queryParams.state = 2;
-					this.queryParams.dealId = this.user.personId;
-				} else if (this.user.personPower == 3) {
-					this.queryParams.state = null;
-				}
-
 				console.log(this.queryParams);
-				querySuitByPage(this.queryParams).then(response => {
-					this.suitList = response.datas;
+				queryPerformingByPage(this.queryParams).then(response => {
+					this.performingList = response.datas;
 					console.log(response.datas);
 					this.total = response.total;
 					this.loading = false;
-					this.init_loading = false;
 				});
 			},
 			getUnallocList() {
@@ -566,31 +498,6 @@
 				this.title_deal = "投诉处理";
 				this.suit_form.suitId = item.suitId;
 				console.log(this.suit_form);
-			},
-			fillSuitButton(item) {
-				let suit = {
-					suitId: item.suitId,
-					state: 5,
-				};
-				console.log(suit);
-				this.$confirm('请问是否结案', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					fillSuit(suit).then(res => {
-						if (res != -1) {
-							//提示
-							this.$message.success("结案成功");
-						} else {
-							this.$message.success("结案失败");
-						}
-						this.getUncompleteList();
-					});
-				}).catch(() => {
-
-				});
-
 			}
 		},
 		mounted() {
@@ -604,10 +511,6 @@
 </script>
 
 <style>
-	.my-outline-border {
-		padding-top: 20px;
-		padding-bottom: 60px;
-	}
 
 	.rate-div {
 		margin-top: 10px;
@@ -623,7 +526,6 @@
 	.submit-rate-button {
 		width: 50px;
 		line-height: 20px;
-		margin-left: 15px;
 		color: white;
 		text-align: center;
 		border-radius: 3px;

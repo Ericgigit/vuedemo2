@@ -9,6 +9,18 @@
 		<el-button v-if="user.personPower == emerge_examer" class="creat-complaint-button" type="primary"
 			@click="getUnapproveList()">待审批</el-button>
 
+		<!-- 列表 开始 -->
+		<el-form :model="queryParams" size="small" :inline="true" label-width="68px" class="my-form-style"
+			style="padding-left: 20px;margin-top: 15px;">
+			<el-form-item label="发布时间" prop="expireTime">
+				<el-date-picker v-model="queryParams.publishTime" type="datetime" placeholder="选择日期时间">
+				</el-date-picker>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+				<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+			</el-form-item>
+		</el-form>
 
 		<el-switch v-model="active_border" active-text="开启边框" style="width: 100%; margin-top: 15px;"></el-switch>
 
@@ -17,6 +29,8 @@
 			<el-descriptions class="margin-top" :title="'应急消息编号 '+item.emergeId" :column="2" :border=active_border>
 
 				<template slot="extra">
+					<el-button v-if="user.personPower == emerge_examer && item.state != '4'" type="primary" size="small"
+						@click="modifyMsg(item)">修改</el-button>
 					<el-button v-if="user.personPower == emerge_examer && item.state == '1'" type="primary" size="small"
 						@click="confirmApprove(item.emergeId)">审批通过</el-button>
 
@@ -67,8 +81,28 @@
 					<el-button @click="resetForm()">重置</el-button>
 				</el-form-item>
 			</el-form>
-
 		</el-dialog>
+
+		<!-- 应急消息表单 -->
+		<el-dialog class="register-panel" :title="title" :visible.sync="modify_open" width="500px" append-to-body>
+
+			<el-form :rules="rules2" :model="emerge_form2" ref="emerge_form2" label-width="100px">
+				<el-form-item label="消息内容" prop="emergeContext">
+					<el-input type="textarea" v-model="emerge_form2.emergeContext"></el-input>
+				</el-form-item>
+				<el-form-item label="失效时间" prop="expireTime">
+					<el-date-picker v-model="emerge_form2.expireTime" type="datetime" placeholder="选择日期时间"
+						:clearable="false">
+					</el-date-picker>
+				</el-form-item>
+
+				<el-form-item>
+					<el-button type="primary" @click="modifyEmergeFormButton()">立即提交</el-button>
+					<el-button @click="resetForm()">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
+
 	</div>
 </template>
 
@@ -79,6 +113,7 @@
 		deleteEmergeMsg,
 		approveEmergeMsg,
 		submitDealSuitForm,
+		modifyEmergeMsg,
 	} from '@/api/getData.js';
 	import {
 		getStorage,
@@ -117,8 +152,10 @@
 				queryParams: {
 					page: 1,
 					limit: 3,
+					publishTime: null,
+					expireTime: null,
 					publishId: null,
-					state: null,
+					state: '',
 				},
 				//总条数
 				total: 0,
@@ -131,8 +168,14 @@
 				// 表单参数
 				title: "",
 				open: false,
+				modify_open: false,
 
 				emerge_form: {
+					emergeContext: "",
+					expireTime: '',
+					state: null,
+				},
+				emerge_form2: {
 					emergeContext: "",
 					expireTime: '',
 					state: null,
@@ -144,12 +187,13 @@
 						message: '请填写应急消息内容',
 						trigger: 'blur'
 					}],
-					expireTime: [{
-						type: 'date',
+				},
+				rules2: {
+					emergeContext: [{
 						required: true,
-						message: '请设置失效时间',
-						trigger: 'change'
-					}]
+						message: '请填写应急消息内容',
+						trigger: 'blur'
+					}],
 				},
 
 				user: {
@@ -167,6 +211,37 @@
 			};
 		},
 		methods: {
+			/** 搜索按钮操作 */
+			handleQuery() {
+				this.queryParams.page = 1;
+				this.queryParams.state = '';
+				this.getList();
+			},
+			/** 重置按钮操作 */
+			resetQuery() {
+				this.queryParams = {
+					page: 1,
+					limit: 3,
+					publishTime: null,
+					expireTime: null,
+				}
+				this.getList();
+			},
+			//修改应急消息
+			modifyMsg(item) {
+				this.emerge_form2 = JSON.parse(JSON.stringify(item));
+				let publishDateString = this.emerge_form2.publishTime;
+				let expireDateString = this.emerge_form2.expireTime;
+				let publishDate = new Date(publishDateString);
+				let expireDate = new Date(expireDateString);
+				this.emerge_form2.publishTime = publishDate;
+				this.emerge_form2.expireTime = expireDate;
+
+				console.log("emerge_form2", this.emerge_form2)
+				this.modify_open = true;
+				this.title = "修改应急消息";
+
+			},
 			//提交应急消息
 			submitEmergeFormButton() {
 				const currentTime = new Date();
@@ -196,52 +271,38 @@
 					}
 				});
 			},
+			modifyEmergeFormButton() {
+				// this.$refs.emerge_form.validate((valid) => {
+				// 	if (valid) {
+
+				// 	} else {
+				// 		// 表单验证失败，可以进行相应的处理
+				// 	}
+				// });
+				console.log(this.emerge_form2);
+				// 表单验证通过，执行提交逻辑
+				// this.emerge_form2.expireTime = '';
+				// this.emerge_form2.publishTime = '';
+				modifyEmergeMsg(this.emerge_form2).then(res => {
+					console.log(res);
+					this.$message.success('修改成功');
+					this.modify_open = false;
+					this.getList();
+				});
+				this.resetForm();
+			},
 
 			creatEmerge() {
 				this.open = true;
 				this.title = "新建应急消息";
 				this.emerge_form.submitId = this.user.personId;
 			},
-			submitForm() {
-				this.$refs["emerge_form"].validate(valid => {
-					if (valid) {
-						console.log(this.emerge_form);
-						submitSuitForm(this.emerge_form).then(res => {
-							console.log(res);
-							this.$message.success('新增成功');
-							this.open = false;
-							this.getList();
-						});
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-				this.resetForm();
-
-			},
 			resetForm() {
 				this.emerge_form.publishId = null;
 				this.emerge_form.emergeContext = "";
 				this.emerge_form.expireTime = '';
+				this.emerge_form.publishTime = '';
 			},
-			submitDealForm() {
-				//dealButton中已经设置suitId
-				const params = {
-					suitId: this.emerge_form.suitId,
-					dealIma: this.Picture,
-					dealVideo: this.Video,
-					dealContext: this.emerge_form.dealContext,
-				}
-
-				submitDealSuitForm(params).then(res => {
-					console.log(res);
-					this.$message.success('新增成功');
-					this.open_deal = false;
-					this.getList();
-				});
-			},
-
 			//撤回应急消息
 			deleteEmergeButton(Id) {
 				this.$confirm('请问是否撤回应急消息', '提示', {

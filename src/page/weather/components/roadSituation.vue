@@ -4,9 +4,13 @@
 
 <script>
 	export default {
-
+		data() {
+			return {
+				longAndLat: [121.36352, 31.19327],
+			};
+		},
 		methods: {
-			initAMap() {
+			initMap() {
 				var map = new AMap.Map('amap-container', {
 					// 地图中心位置
 					center: this.longAndLat,
@@ -14,7 +18,8 @@
 					// 主题色
 					mapStyle: 'amap://styles/normal',
 					// 地图层级
-					zoom: 12
+					zoom: 15,
+					zoomEnable: false,
 				})
 				// 实时路况图层
 				var trafficLayer = new AMap.TileLayer.Traffic({
@@ -25,7 +30,7 @@
 			}
 		},
 		mounted() {
-			this.initAMap();
+			this.initMap();
 		},
 	};
 </script>

@@ -6,6 +6,9 @@ import login from "../page/login/login";
 import main from "../page/main/main";
 import student from "../page/student/student";
 import hotel from "../page/hotel/hotel";
+import performing from "../page/performing/performing";
+import restaurant from "../page/restaurant/restaurant";
+
 import graph from "../page/graph/graph";
 import map from "../page/map/map";
 import complaint from "../page/complaint/complaint";
@@ -101,11 +104,19 @@ export default new Router({
 			  	}
 			  },
 			  {
-			  	path:'/student',
-			  	name:'student',
-			  	component:student,
+			  	path:'/performing',
+			  	name:'performing',
+			  	component:performing,
 			  	meta:{
-			  		title:"学生管理"
+			  		title:"演出"
+			  	}
+			  },
+			  {
+			  	path:'/restaurant',
+			  	name:'restaurant',
+			  	component:restaurant,
+			  	meta:{
+			  		title:"餐厅"
 			  	}
 			  },
 		  ]

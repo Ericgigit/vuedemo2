@@ -1,7 +1,12 @@
 <template>
 	<div style="height: 100vh; display: flex; flex-direction: column;background-color: #333333;">
 		<div class="block" style="flex: 6;">
-			<div class="home-picture"></div>
+			<div class="home-picture">
+				<div class="title" @click="goToLogin()">
+					<img class="col-menu-logo" :src="require('@/assets/logo5.png')">
+					<div style="margin-top: 10px;margin-left: 10px;">动物奇镜旅游景区</div>
+				</div>
+			</div>
 		</div>
 
 		<div style="flex: 3;display: flex; flex-direction:row;padding: 20px;padding-top: 25px;padding-bottom: 25px;">
@@ -62,6 +67,18 @@
 </script>
 
 <style>
+	.title {
+		display: flex;
+		flex-direction: row;
+		width: 300px;
+		height: 50px;
+		padding-left: 20px;
+		text-align: left;
+		line-height: 50px;
+		color: #e6e6e6;
+		font-size: 23px;
+	}
+
 	.home-picture {
 		width: 100%;
 		height: 100%;

@@ -43,29 +43,19 @@
 						<i class="el-icon-cloudy-and-sunny"></i>
 						<span slot="title">天气与路况</span>
 					</el-menu-item>
-					<el-menu-item index="3" @click="goToPage('student')">
-						<i class="el-icon-menu"></i>
-						<span slot="title">导航二</span>
+					<el-menu-item index="3" @click="goToPage('performing')">
+						<i class="el-icon-tickets"></i>
+						<span slot="title">演出</span>
 					</el-menu-item>
 					<el-menu-item index="4" @click="goToPage('hotel')">
-						<i class="el-icon-document"></i>
+						<i class="el-icon-house"></i>
 						<span slot="title">酒店</span>
 					</el-menu-item>
-					<el-menu-item v-if="user.personPower == average" index="5" @click="goToPage('complaint')">
-						<i class="el-icon-receiving"></i>
-						<span slot="title">投诉</span>
+					<el-menu-item index="5" @click="goToPage('restaurant')">
+						<i class="el-icon-dish"></i>
+						<span slot="title">餐饮</span>
 					</el-menu-item>
-
-					<el-menu-item v-if="user.personPower == manager" index="5" @click="goToPage('complaint')">
-						<i class="el-icon-receiving"></i>
-						<span slot="title">投诉审批</span>
-					</el-menu-item>
-
-					<el-menu-item v-if="user.personPower == dealer" index="5" @click="goToPage('complaint')">
-						<i class="el-icon-receiving"></i>
-						<span slot="title">投诉处理</span>
-					</el-menu-item>
-
+					
 					<el-menu-item v-if="user.personPower == '1'" index="emerge" @click="openMsgBox()">
 						<i class="el-icon-chat-dot-round"></i>
 						<span slot="title">应急消息</span>
@@ -73,6 +63,23 @@
 						  <div size="small" style="height: 25px;line-height: 25px;width: 67px;">应急消息</div>
 						</el-badge> -->
 					</el-menu-item>
+					
+					<el-menu-item v-if="user.personPower == average" index="6" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉</span>
+					</el-menu-item>
+
+					<el-menu-item v-if="user.personPower == manager" index="6" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉审批</span>
+					</el-menu-item>
+
+					<el-menu-item v-if="user.personPower == dealer" index="6" @click="goToPage('complaint')">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">投诉处理</span>
+					</el-menu-item>
+
+					
 					<el-menu-item v-if="user.personPower == '4'" index="emerge" @click="goToPage('emerge')">
 						<i class="el-icon-chat-dot-round"></i>
 						<span slot="title">应急消息发布</span>
@@ -107,9 +114,21 @@
 
 		</div>
 		<el-drawer title="应急消息" :visible.sync="drawer" size="40%">
+			<!-- 列表 开始 -->
+			<el-form :model="queryParams" size="small" :inline="true" label-width="68px" class="my-form-style" style="padding-left: 20px;">
+				<el-form-item label="发布时间" prop="expireTime">
+					<el-date-picker v-model="queryParams.publishTime" type="datetime" placeholder="选择日期时间">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+					<el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+				</el-form-item>
+			</el-form>
+			
 			<div v-for="(item,index) in emergeList" v-bind:key="index" v-loading="loading" style="margin: 22px;">
 				<el-descriptions class="margin-top" :title="'应急消息编号 '+item.emergeId" :column="1">
-					<el-descriptions-item label="消息内容">{{item.emergeContext}}</el-descriptions-item>
+					<el-descriptions-item label="内容">{{item.emergeContext}}</el-descriptions-item>
 					<el-descriptions-item label="发布人">{{item.publishName}}</el-descriptions-item>
 					<el-descriptions-item label="发布时间">{{item.publishTime}}</el-descriptions-item>
 				</el-descriptions>
@@ -153,6 +172,7 @@
 					page: 1,
 					limit: 6,
 					state: 3,
+					publishTime: null,
 				},
 				//总条数
 				total: 0,
@@ -192,6 +212,21 @@
 					this.total = response.total;
 					this.loading = false;
 				});
+			},
+			/** 搜索按钮操作 */
+			handleQuery() {
+				this.queryParams.page = 1;
+				this.openMsgBox();
+			},
+			/** 重置按钮操作 */
+			resetQuery() {
+				this.queryParams = {
+					page: 1,
+					limit: 6,
+					state: 3,
+					publishTime: null,
+				}
+				this.handleQuery();
 			},
 			/** 页数发生改变时触发 */
 			currentChange(page) {

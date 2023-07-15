@@ -136,6 +136,64 @@ export function approveEmergeMsg(data) {
 	})
 }
 
+//审批通过
+export function modifyEmergeMsg(data) {
+	return request({
+		url: '/emergeMsg/modifyMsg',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+
+
+//------------------------------酒店、演出、餐厅--------------------------
+export function queryHotelByPage(data) {
+	return request({
+		url: '/hotel/listHotel',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+export function queryroomByPage(data) {
+	return request({
+		url: '/room/listRoom',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+export function queryRoomsByHotelId(data) {
+	return request({
+		url: '/room/countRoom',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+//更新房间信息
+export function updateRoom(data) {
+	return request({
+		url: '/room/updateRoom',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+export function queryRestaurantByPage(data){
+	return request({
+		url: '/restaurant/listRestaurant',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
+
+export function queryPerformingByPage(data){
+	return request({
+		url: '/performing/listPerforming',//请求接口
+		method: 'post',//请求方式
+		data//请求参数
+	})
+}
 //------------------------------学生数据API-------------------------------
 //学生列表
 export function listStudent(data) {
